@@ -4,6 +4,8 @@ namespace LimitlessController
 {
     public partial class Form1 : Form
     {
+        CancellationTokenSource cts = new CancellationTokenSource();
+
         public Form1()
         {
             InitializeComponent();
@@ -12,7 +14,7 @@ namespace LimitlessController
 
         private void checkedListBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (selectAll.Checked)
+            if (allSelect.Checked)
             {
                 for (int i = 0; i < keyList.Items.Count; i++)
                 {
@@ -33,10 +35,7 @@ namespace LimitlessController
 
         }
 
-        private void selectAll_CheckedChanged(object sender, EventArgs e)
-        {
 
-        }
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -50,8 +49,9 @@ namespace LimitlessController
             {
                 using (TcpClient client = new TcpClient(ip, port))
                 using (NetworkStream stream = client.GetStream())
+
                 {
-                    if (!loop.Checked)
+                    if (!loopCheck.Checked)
                     {
                         foreach (var item in keyList.CheckedItems)
                         {
@@ -63,14 +63,13 @@ namespace LimitlessController
                             int bytes = stream.Read(responseData, 0, responseData.Length);
                             string response = System.Text.Encoding.ASCII.GetString(responseData, 0, bytes);
                             resultView.Rows.Add(message, response);
+                            resultView.Refresh();
                         }
                     }
-                    else if (loop.Checked)
+                    else if (loopCheck.Checked)
                     {
-                        CancellationTokenSource cts = new CancellationTokenSource();
-
-                        while (!cts.IsCancellationRequested)
-                        {
+                        
+                        
                             foreach (var item in keyList.CheckedItems)
                             {
                                 if (cts.IsCancellationRequested)
@@ -81,11 +80,12 @@ namespace LimitlessController
                                 byte[] responseData = new byte[256];
                                 int bytes = stream.Read(responseData, 0, responseData.Length);
                                 string response = System.Text.Encoding.ASCII.GetString(responseData, 0, bytes);
+
                                 resultView.Invoke(new Action(() => resultView.Rows.Add(message, response)));
+
                                 await Task.Delay(1000);
                             }
                         }
-                    }
                 }
             }
             catch (Exception ex)
@@ -109,7 +109,6 @@ namespace LimitlessController
 
         private void button1_Click(object sender, EventArgs e)
         {
-            CancellationTokenSource cts = new CancellationTokenSource();
             cts.Cancel();
 
         }
@@ -122,14 +121,15 @@ namespace LimitlessController
             {
                 using (TcpClient client = new TcpClient(ip, port))
                 {
-                    label3.Text = "Connected";
-                    label3.ForeColor = Color.Green;
+                    label3.Text = "CONNECTED";
+                    label3.BackColor = Color.Green;
+
                 }
             }
             catch
             {
-                label3.Text = "Disconnected";
-                label3.ForeColor = Color.Red;
+                label3.Text = "DISCONNECTED";
+                label3.BackColor = Color.Red;
             }
         }
 
@@ -141,6 +141,34 @@ namespace LimitlessController
         private void Form1_Load_1(object sender, EventArgs e)
         {
 
+        }
+
+        private void loopCheck_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void allSelect_CheckedChanged(object sender, EventArgs e)
+        {
+            if (allSelect.Checked)
+            {
+                for (int i = 0; i < keyList.Items.Count; i++)
+                {
+                    keyList.SetItemChecked(i, true);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < keyList.Items.Count; i++)
+                {
+                    keyList.SetItemChecked(i, false);
+                }
+            }
+        }
+
+        private void button2_Click_1(object sender, EventArgs e)
+        {
+            resultView.Rows.Clear();
         }
     }
 }

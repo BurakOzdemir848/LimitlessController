@@ -32,8 +32,8 @@
             resultView = new DataGridView();
             Key = new DataGridViewTextBoxColumn();
             Response = new DataGridViewTextBoxColumn();
-            selectAll = new RadioButton();
             ipPortPanel = new Panel();
+            label3 = new Label();
             connectIp = new Button();
             portBox = new TextBox();
             ipBox = new TextBox();
@@ -41,8 +41,9 @@
             label1 = new Label();
             keyList = new CheckedListBox();
             button1 = new Button();
-            loop = new RadioButton();
-            label3 = new Label();
+            loopCheck = new CheckBox();
+            allSelect = new CheckBox();
+            button2 = new Button();
             ((System.ComponentModel.ISupportInitialize)resultView).BeginInit();
             ipPortPanel.SuspendLayout();
             SuspendLayout();
@@ -50,7 +51,7 @@
             // send
             // 
             send.BackColor = Color.Lime;
-            send.Location = new Point(630, 263);
+            send.Location = new Point(626, 440);
             send.Name = "send";
             send.Size = new Size(125, 39);
             send.TabIndex = 2;
@@ -62,17 +63,17 @@
             // 
             resultView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             resultView.Columns.AddRange(new DataGridViewColumn[] { Key, Response });
-            resultView.Location = new Point(811, 66);
+            resultView.Location = new Point(759, 41);
             resultView.Name = "resultView";
             resultView.RowHeadersWidth = 62;
-            resultView.Size = new Size(364, 337);
+            resultView.Size = new Size(814, 794);
             resultView.TabIndex = 0;
             resultView.CellContentClick += resultView_CellContentClick;
             // 
             // Key
             // 
             Key.HeaderText = "Key";
-            Key.MinimumWidth = 8;
+            Key.MinimumWidth = 35;
             Key.Name = "Key";
             Key.Width = 150;
             // 
@@ -81,19 +82,7 @@
             Response.HeaderText = "Response";
             Response.MinimumWidth = 8;
             Response.Name = "Response";
-            Response.Width = 150;
-            // 
-            // selectAll
-            // 
-            selectAll.AutoSize = true;
-            selectAll.Location = new Point(46, 28);
-            selectAll.Name = "selectAll";
-            selectAll.Size = new Size(108, 29);
-            selectAll.TabIndex = 9;
-            selectAll.TabStop = true;
-            selectAll.Text = "Select All";
-            selectAll.UseVisualStyleBackColor = true;
-            selectAll.CheckedChanged += selectAll_CheckedChanged;
+            Response.Width = 600;
             // 
             // ipPortPanel
             // 
@@ -104,10 +93,21 @@
             ipPortPanel.Controls.Add(ipBox);
             ipPortPanel.Controls.Add(label2);
             ipPortPanel.Controls.Add(label1);
-            ipPortPanel.Location = new Point(283, 223);
+            ipPortPanel.Location = new Point(279, 400);
             ipPortPanel.Name = "ipPortPanel";
             ipPortPanel.Size = new Size(300, 180);
             ipPortPanel.TabIndex = 11;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.BackColor = Color.Red;
+            label3.Location = new Point(71, 4);
+            label3.Name = "label3";
+            label3.Size = new Size(142, 25);
+            label3.TabIndex = 13;
+            label3.Text = "DISCONNECTED";
+            label3.Click += label3_Click;
             // 
             // connectIp
             // 
@@ -155,8 +155,8 @@
             // 
             keyList.BackColor = SystemColors.ActiveBorder;
             keyList.FormattingEnabled = true;
-            keyList.Items.AddRange(new object[] { "sspaValue", "sspaAt", "modemTx", "modemSr", "modemLevel", "modemFreq", "acuStep", "acuRef", "acuPol", "acuGuc", "acuEl", "acuAz" });
-            keyList.Location = new Point(46, 63);
+            keyList.Items.AddRange(new object[] { "sspaValue", "sspaAtt", "modemTx", "modemSr", "modemLevel", "modemFreq", "acuStep", "acuRef", "acuPol", "acuGuc", "acuEl", "acuAz" });
+            keyList.Location = new Point(42, 240);
             keyList.Name = "keyList";
             keyList.Size = new Size(169, 340);
             keyList.TabIndex = 1;
@@ -166,7 +166,7 @@
             // button1
             // 
             button1.BackColor = Color.FromArgb(192, 0, 0);
-            button1.Location = new Point(630, 308);
+            button1.Location = new Point(626, 485);
             button1.Name = "button1";
             button1.Size = new Size(125, 41);
             button1.TabIndex = 12;
@@ -174,40 +174,53 @@
             button1.UseVisualStyleBackColor = false;
             button1.Click += button1_Click;
             // 
-            // loop
+            // loopCheck
             // 
-            loop.AutoSize = true;
-            loop.Location = new Point(642, 223);
-            loop.Name = "loop";
-            loop.Size = new Size(83, 29);
-            loop.TabIndex = 3;
-            loop.TabStop = true;
-            loop.Text = "Loop ";
-            loop.UseVisualStyleBackColor = true;
-            loop.CheckedChanged += loopButton_CheckedChanged;
+            loopCheck.AutoSize = true;
+            loopCheck.BackColor = Color.White;
+            loopCheck.Location = new Point(643, 405);
+            loopCheck.Name = "loopCheck";
+            loopCheck.Size = new Size(75, 29);
+            loopCheck.TabIndex = 13;
+            loopCheck.Text = "loop";
+            loopCheck.UseVisualStyleBackColor = false;
+            loopCheck.CheckedChanged += loopCheck_CheckedChanged;
             // 
-            // label3
+            // allSelect
             // 
-            label3.AutoSize = true;
-            label3.BackColor = Color.Red;
-            label3.Location = new Point(71, 4);
-            label3.Name = "label3";
-            label3.Size = new Size(142, 25);
-            label3.TabIndex = 13;
-            label3.Text = "DISCONNECTED";
-            label3.Click += label3_Click;
+            allSelect.AutoSize = true;
+            allSelect.BackColor = Color.White;
+            allSelect.Location = new Point(42, 205);
+            allSelect.Name = "allSelect";
+            allSelect.Size = new Size(102, 29);
+            allSelect.TabIndex = 14;
+            allSelect.Text = "selectAll";
+            allSelect.UseVisualStyleBackColor = false;
+            allSelect.CheckedChanged += allSelect_CheckedChanged;
+            // 
+            // button2
+            // 
+            button2.BackColor = Color.Red;
+            button2.Location = new Point(643, 801);
+            button2.Name = "button2";
+            button2.Size = new Size(112, 34);
+            button2.TabIndex = 15;
+            button2.Text = "ClearLogs";
+            button2.UseVisualStyleBackColor = false;
+            button2.Click += button2_Click_1;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = SystemColors.ScrollBar;
-            ClientSize = new Size(1272, 755);
-            Controls.Add(loop);
+            BackColor = Color.Gray;
+            ClientSize = new Size(1585, 872);
+            Controls.Add(button2);
+            Controls.Add(allSelect);
+            Controls.Add(loopCheck);
             Controls.Add(button1);
             Controls.Add(resultView);
             Controls.Add(ipPortPanel);
-            Controls.Add(selectAll);
             Controls.Add(send);
             Controls.Add(keyList);
             Name = "Form1";
@@ -223,18 +236,19 @@
         #endregion
         private Button send;
         private DataGridView resultView;
-        private RadioButton selectAll;
         private Panel ipPortPanel;
         private TextBox portBox;
         private TextBox ipBox;
         private Label label2;
         private Label label1;
         private CheckedListBox keyList;
-        private DataGridViewTextBoxColumn Key;
-        private DataGridViewTextBoxColumn Response;
         private Button button1;
-        private RadioButton loop;
         private Button connectIp;
         private Label label3;
+        private CheckBox loopCheck;
+        private CheckBox allSelect;
+        private DataGridViewTextBoxColumn Key;
+        private DataGridViewTextBoxColumn Response;
+        private Button button2;
     }
 }
