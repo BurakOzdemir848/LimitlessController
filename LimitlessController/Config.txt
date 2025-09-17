@@ -1,0 +1,18 @@
+﻿{
+  "IP": "192.168.11.84",
+  "Port": "5080",
+  "Keys": [
+    { "Key": "modemFreq" },
+    { "Key": "modemLevel" },
+    { "Key": "modemSr" },
+    { "Key": "modemTx" },
+    { "Key": "sspaValue" },
+    { "Key": "sspaAtt" },
+    { "Key": "acuStep" },
+    { "Key": "acuAz" },
+    { "Key": "acuEl" },
+    { "Key": "acuPol" },
+    { "Key": "acuRef" },
+    { "Key": "acuGuc" }
+  ]
+}
