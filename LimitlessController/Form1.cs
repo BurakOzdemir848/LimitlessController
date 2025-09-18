@@ -1,3 +1,4 @@
+using System.Net.Sockets;
 using System.Text.Json;
 
 namespace LimitlessController
@@ -53,11 +54,15 @@ namespace LimitlessController
                     {
                         foreach (ListViewItem item in keyList.CheckedItems)
                         {
-                            byte[] response = await connection.SendAsync(clrfCheckBox.Checked, item.Text);
+                            
+                            byte[] formatedMessage = DataConverter.ConvertRequest(item.Text, (DataFormat)sendFormatCb.SelectedIndex);
+
+                            byte[] response = await connection.SendAsync(clrfCheckBox.Checked, formatedMessage);
 
                             string hexDump = BitConverter.ToString(response);
-                            int rowIndex = resultView.Rows.Add(item.Text, hexDump, "");
-                            resultView.Rows[rowIndex].Tag = response;
+                            string Formated = DataConverter.ConvertResponse(response, (DataFormat)responseFormatCb.SelectedIndex);
+                            resultView.Rows.Add(item.Text, hexDump, Formated);
+
                         }
                     }
                     else if (loopCheck.Checked)
@@ -72,9 +77,14 @@ namespace LimitlessController
                                 colorTimer.Start();
                                 loopColor.Invalidate();
 
-                                byte[] response = await connection.SendAsync(clrfCheckBox.Checked, item.Text);
-                                resultView.Rows.Add(item.Text, response);
+                                byte[] formatedMessage = DataConverter.ConvertRequest(item.Text, (DataFormat)sendFormatCb.SelectedIndex);
+                                byte[] response = await connection.SendAsync(clrfCheckBox.Checked, formatedMessage);
+
+                                string hexDump = BitConverter.ToString(response);
+                                string Formated = DataConverter.ConvertResponse(response, (DataFormat)responseFormatCb.SelectedIndex);
+                                resultView.Rows.Add(item.Text, hexDump, Formated);
                                 await Task.Delay(1000, token);
+                                
                             }
                     }
                 }
@@ -87,15 +97,13 @@ namespace LimitlessController
 
 
         private void resultView_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-            resultView.AllowUserToAddRows = false;
-            resultView.ReadOnly = true;
-            resultView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            resultView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
-            resultView.Columns.Clear();
-            resultView.Columns.Add("Key", "Key");
-            resultView.Columns.Add("Response", "Response");
+        {
+            resultView.EditMode = DataGridViewEditMode.EditOnKeystrokeOrF2;
+            resultView.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            resultView.AllowUserToAddRows = false;
+            resultView.SelectionMode = DataGridViewSelectionMode.CellSelect;
+            resultView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
 
         private void button1_Click(object sender, EventArgs e) //stop loop btn
@@ -106,7 +114,7 @@ namespace LimitlessController
             loopColor.Invalidate();
         }
 
-        private async void button2_Click(object sender, EventArgs e)
+        private async void ConnectBtn_Click(object sender, EventArgs e)
         {
             string ip = ipBox.Text;
             int port = int.Parse(portBox.Text);
@@ -114,6 +122,7 @@ namespace LimitlessController
             {
                 label3.Text = "CONNECTED";
                 label3.BackColor = Color.Green;
+                ConnectionTimer.Start();
 
             }
             else
@@ -132,9 +141,9 @@ namespace LimitlessController
         private void Form1_Load_1(object sender, EventArgs e)
         {
             LoadFromTxt();
+            ConnectionTimer.Interval = 1000;
+            ConnectionTimer.Tick += ConnectionTimer_Tick;
 
-            this.MaximizeBox = false;
-            this.FormBorderStyle = FormBorderStyle.FixedSingle;
         }
 
         private void loopCheck_CheckedChanged(object sender, EventArgs e)
@@ -153,7 +162,7 @@ namespace LimitlessController
                     item.Checked = false;
         }
 
-        private void button2_Click_1(object sender, EventArgs e)
+        private void clearLogBtn_Click_1(object sender, EventArgs e)
         {
             resultView.Rows.Clear();
         }
@@ -197,8 +206,8 @@ namespace LimitlessController
         private void keyAddButton_Click(object sender, EventArgs e)
         {
             keyTextBox.Text = keyTextBox.Text.Trim();
-
-            if (!string.IsNullOrEmpty(keyTextBox.Text) && !keyList.Items.ToString().Contains(keyTextBox.Text))
+            if (loopRunning == true) MessageBox.Show("Stop the loop before adding a keey");
+            else if (!string.IsNullOrEmpty(keyTextBox.Text) && !keyList.Items.ToString().Contains(keyTextBox.Text))
             {
                 keyList.Items.Add(keyTextBox.Text);
                 keyTextBox.Clear();
@@ -241,16 +250,62 @@ namespace LimitlessController
 
         private void responseFormatCb_SelectedIndexChanged(object sender, EventArgs e)
         {
-            DataFormat selected = (DataFormat)responseFormatCb.SelectedItem;
 
-            foreach(DataGridViewRow row in resultView.Rows)
+
+        }
+
+        private void sendFormatCb_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void convertReqTextBox_TextChanged(object sender, EventArgs e)
+        {
+            try
             {
-                if (row.Tag is byte[] data)
-                {
-                    string formatted = DataConverter.ConvertResponse(data, selected);
-                    row.Cells["Formated"].Value = formatted;
-                }
-            }   
+                byte[] result = DataConverter.ConvertRequest(convertReqTextBox.Text, (DataFormat)convertReqCb.SelectedItem);
+                convertResultTextBox.Text = DataConverter.ConvertResponse(result, (DataFormat)convertResultCb.SelectedItem);
+            }
+            catch { convertResultTextBox.Clear(); }
+        }
+
+        private void convertResultTextBox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void convertCb_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void resultView_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        {
+            if (e.Control is TextBox tb)
+            {
+                tb.ReadOnly = true;
+                tb.ShortcutsEnabled = true;
+            }
+        }
+  
+
+
+
+        private void ConnectionTimer_Tick(object sender, EventArgs e)
+        {
+
+            if (connection.IsConnected) {
+                label3.Text = "CONNECTED";
+                label3.BackColor = Color.Green;
+
+            }
+            else
+            {
+                label3.Text = "DISCONNECTED";
+                label3.BackColor = Color.Red;
+            }
+
+
 
         }
     }

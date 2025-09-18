@@ -2,9 +2,11 @@
 {
     public enum DataFormat
     {
+        Decimal,
         Hex,
         Binary,
         Utf8String,
+        ASCIIString,
         Float,
         Double,
         Int16,

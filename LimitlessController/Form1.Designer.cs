@@ -32,6 +32,9 @@
             ColumnHeader KEYS;
             send = new Button();
             resultView = new DataGridView();
+            Key = new DataGridViewTextBoxColumn();
+            Response = new DataGridViewTextBoxColumn();
+            Formated = new DataGridViewTextBoxColumn();
             ipPortPanel = new Panel();
             disconnectButton = new Button();
             label3 = new Label();
@@ -43,7 +46,7 @@
             button1 = new Button();
             loopCheck = new CheckBox();
             allSelect = new CheckBox();
-            button2 = new Button();
+            clearLogBtn = new Button();
             loopColor = new Panel();
             colorTimer = new System.Windows.Forms.Timer(components);
             keyAddButton = new Button();
@@ -53,9 +56,11 @@
             clrfCheckBox = new CheckBox();
             sendFormatCb = new ComboBox();
             responseFormatCb = new ComboBox();
-            Key = new DataGridViewTextBoxColumn();
-            Response = new DataGridViewTextBoxColumn();
-            Formated = new DataGridViewTextBoxColumn();
+            convertReqTextBox = new RichTextBox();
+            convertResultTextBox = new RichTextBox();
+            convertResultCb = new ComboBox();
+            convertReqCb = new ComboBox();
+            ConnectionTimer = new System.Windows.Forms.Timer(components);
             KEYS = new ColumnHeader();
             ((System.ComponentModel.ISupportInitialize)resultView).BeginInit();
             ipPortPanel.SuspendLayout();
@@ -69,9 +74,9 @@
             // send
             // 
             send.BackColor = Color.Lime;
-            send.Location = new Point(315, 224);
+            send.Location = new Point(423, 35);
             send.Name = "send";
-            send.Size = new Size(101, 47);
+            send.Size = new Size(101, 39);
             send.TabIndex = 2;
             send.Text = "Send Keys";
             send.UseVisualStyleBackColor = false;
@@ -79,14 +84,40 @@
             // 
             // resultView
             // 
+            resultView.AllowUserToAddRows = false;
+            resultView.AllowUserToDeleteRows = false;
+            resultView.BackgroundColor = Color.DarkSeaGreen;
             resultView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             resultView.Columns.AddRange(new DataGridViewColumn[] { Key, Response, Formated });
             resultView.Location = new Point(952, 12);
             resultView.Name = "resultView";
             resultView.RowHeadersWidth = 62;
+            resultView.SelectionMode = DataGridViewSelectionMode.CellSelect;
             resultView.Size = new Size(916, 1000);
             resultView.TabIndex = 0;
             resultView.CellContentClick += resultView_CellContentClick;
+            resultView.EditingControlShowing += resultView_EditingControlShowing;
+            // 
+            // Key
+            // 
+            Key.HeaderText = "Key";
+            Key.MinimumWidth = 35;
+            Key.Name = "Key";
+            Key.Width = 50;
+            // 
+            // Response
+            // 
+            Response.HeaderText = "Response";
+            Response.MinimumWidth = 8;
+            Response.Name = "Response";
+            Response.Width = 400;
+            // 
+            // Formated
+            // 
+            Formated.HeaderText = "Formated";
+            Formated.MinimumWidth = 8;
+            Formated.Name = "Formated";
+            Formated.Width = 400;
             // 
             // ipPortPanel
             // 
@@ -98,7 +129,7 @@
             ipPortPanel.Controls.Add(ipBox);
             ipPortPanel.Controls.Add(label2);
             ipPortPanel.Controls.Add(label1);
-            ipPortPanel.Location = new Point(42, 519);
+            ipPortPanel.Location = new Point(499, 211);
             ipPortPanel.Name = "ipPortPanel";
             ipPortPanel.Size = new Size(375, 232);
             ipPortPanel.TabIndex = 11;
@@ -134,7 +165,7 @@
             connectIp.TabIndex = 13;
             connectIp.Text = "Connect";
             connectIp.UseVisualStyleBackColor = false;
-            connectIp.Click += button2_Click;
+            connectIp.Click += ConnectBtn_Click;
             // 
             // portBox
             // 
@@ -145,7 +176,7 @@
             // 
             // ipBox
             // 
-            ipBox.Location = new Point(110, 65);
+            ipBox.Location = new Point(110, 71);
             ipBox.Name = "ipBox";
             ipBox.Size = new Size(150, 31);
             ipBox.TabIndex = 12;
@@ -172,7 +203,7 @@
             // button1
             // 
             button1.BackColor = Color.FromArgb(192, 0, 0);
-            button1.Location = new Point(845, 12);
+            button1.Location = new Point(845, 34);
             button1.Name = "button1";
             button1.Size = new Size(101, 38);
             button1.TabIndex = 12;
@@ -184,7 +215,7 @@
             // 
             loopCheck.AutoSize = true;
             loopCheck.BackColor = Color.LightSteelBlue;
-            loopCheck.Location = new Point(333, 150);
+            loopCheck.Location = new Point(423, 119);
             loopCheck.Name = "loopCheck";
             loopCheck.Size = new Size(84, 29);
             loopCheck.TabIndex = 13;
@@ -196,7 +227,7 @@
             // 
             allSelect.AutoSize = true;
             allSelect.BackColor = Color.LightSteelBlue;
-            allSelect.Location = new Point(315, 80);
+            allSelect.Location = new Point(33, 12);
             allSelect.Name = "allSelect";
             allSelect.Size = new Size(102, 29);
             allSelect.TabIndex = 14;
@@ -204,16 +235,16 @@
             allSelect.UseVisualStyleBackColor = false;
             allSelect.CheckedChanged += allSelect_CheckedChanged;
             // 
-            // button2
+            // clearLogBtn
             // 
-            button2.BackColor = Color.Red;
-            button2.Location = new Point(1771, 12);
-            button2.Name = "button2";
-            button2.Size = new Size(97, 38);
-            button2.TabIndex = 15;
-            button2.Text = "ClearLogs";
-            button2.UseVisualStyleBackColor = false;
-            button2.Click += button2_Click_1;
+            clearLogBtn.BackColor = Color.Red;
+            clearLogBtn.Location = new Point(1771, 12);
+            clearLogBtn.Name = "clearLogBtn";
+            clearLogBtn.Size = new Size(97, 38);
+            clearLogBtn.TabIndex = 15;
+            clearLogBtn.Text = "ClearLogs";
+            clearLogBtn.UseVisualStyleBackColor = false;
+            clearLogBtn.Click += clearLogBtn_Click_1;
             // 
             // loopColor
             // 
@@ -231,7 +262,7 @@
             // keyAddButton
             // 
             keyAddButton.BackColor = Color.DarkSeaGreen;
-            keyAddButton.Location = new Point(188, 35);
+            keyAddButton.Location = new Point(189, 466);
             keyAddButton.Name = "keyAddButton";
             keyAddButton.Size = new Size(60, 34);
             keyAddButton.TabIndex = 18;
@@ -242,7 +273,7 @@
             // keyDeleteButton
             // 
             keyDeleteButton.BackColor = Color.RosyBrown;
-            keyDeleteButton.Location = new Point(254, 34);
+            keyDeleteButton.Location = new Point(254, 463);
             keyDeleteButton.Name = "keyDeleteButton";
             keyDeleteButton.Size = new Size(163, 37);
             keyDeleteButton.TabIndex = 19;
@@ -252,7 +283,7 @@
             // 
             // keyTextBox
             // 
-            keyTextBox.Location = new Point(32, 35);
+            keyTextBox.Location = new Point(33, 466);
             keyTextBox.Name = "keyTextBox";
             keyTextBox.Size = new Size(150, 31);
             keyTextBox.TabIndex = 20;
@@ -263,7 +294,7 @@
             keyList.CheckBoxes = true;
             keyList.Columns.AddRange(new ColumnHeader[] { KEYS });
             keyList.FullRowSelect = true;
-            keyList.Location = new Point(33, 80);
+            keyList.Location = new Point(33, 37);
             keyList.Name = "keyList";
             keyList.Size = new Size(384, 420);
             keyList.TabIndex = 21;
@@ -275,7 +306,7 @@
             // 
             clrfCheckBox.AutoSize = true;
             clrfCheckBox.BackColor = Color.LightSteelBlue;
-            clrfCheckBox.Location = new Point(300, 115);
+            clrfCheckBox.Location = new Point(141, 12);
             clrfCheckBox.Name = "clrfCheckBox";
             clrfCheckBox.Size = new Size(117, 29);
             clrfCheckBox.TabIndex = 22;
@@ -285,51 +316,83 @@
             // 
             // sendFormatCb
             // 
+            
             sendFormatCb.FormattingEnabled = true;
-            sendFormatCb.Location = new Point(248, 185);
+            sendFormatCb.Items.AddRange(new object[] { DataFormat.Decimal, DataFormat.Hex, DataFormat.Binary, DataFormat.Utf8String, DataFormat.ASCIIString, DataFormat.Float, DataFormat.Double, DataFormat.Int16, DataFormat.Int32, DataFormat.UInt16, DataFormat.UInt32, DataFormat.Int64, DataFormat.UInt64 });
+            sendFormatCb.Location = new Point(423, 80);
             sendFormatCb.Name = "sendFormatCb";
             sendFormatCb.Size = new Size(169, 33);
             sendFormatCb.TabIndex = 23;
-            sendFormatCb.Text = "Message Format";
+            sendFormatCb.SelectedIndexChanged += sendFormatCb_SelectedIndexChanged;
+            sendFormatCb.SelectedIndex = 4;
             // 
             // responseFormatCb
             // 
+           
             responseFormatCb.FormattingEnabled = true;
-            responseFormatCb.Location = new Point(770, 56);
+            responseFormatCb.Items.AddRange(new object[] { DataFormat.Decimal, DataFormat.Hex, DataFormat.Binary, DataFormat.Utf8String, DataFormat.ASCIIString, DataFormat.Float, DataFormat.Double, DataFormat.Int16, DataFormat.Int32, DataFormat.UInt16, DataFormat.UInt32, DataFormat.Int64, DataFormat.UInt64 });
+            responseFormatCb.Location = new Point(771, 80);
             responseFormatCb.Name = "responseFormatCb";
             responseFormatCb.Size = new Size(175, 33);
             responseFormatCb.TabIndex = 24;
-            responseFormatCb.Text = "Response Format";
             responseFormatCb.SelectedIndexChanged += responseFormatCb_SelectedIndexChanged;
-            responseFormatCb.DataSource=Enum.GetValues(typeof(DataFormat));
+            responseFormatCb.SelectedIndex = 2;
             // 
-            // Key
+            // convertReqTextBox
             // 
-            Key.HeaderText = "Key";
-            Key.MinimumWidth = 35;
-            Key.Name = "Key";
-            Key.Width = 50;
+            convertReqTextBox.Location = new Point(319, 723);
+            convertReqTextBox.Name = "convertReqTextBox";
+            convertReqTextBox.Size = new Size(253, 144);
+            convertReqTextBox.TabIndex = 26;
+            convertReqTextBox.Text = "";
+            convertReqTextBox.TextChanged += convertReqTextBox_TextChanged;
             // 
-            // Response
+            // convertResultTextBox
             // 
-            Response.HeaderText = "Response";
-            Response.MinimumWidth = 8;
-            Response.Name = "Response";
-            Response.Width = 400;
+            convertResultTextBox.Location = new Point(693, 723);
+            convertResultTextBox.Name = "convertResultTextBox";
+            convertResultTextBox.Size = new Size(253, 144);
+            convertResultTextBox.TabIndex = 27;
+            convertResultTextBox.Text = "";
+            convertResultTextBox.TextChanged += convertResultTextBox_TextChanged;
             // 
-            // Formated
+            // convertResultCb
             // 
-            Formated.HeaderText = "Formated";
-            Formated.MinimumWidth = 8;
-            Formated.Name = "Formated";
-            Formated.Width = 400;
+            
+            convertResultCb.FormattingEnabled = true;
+            convertResultCb.Items.AddRange(new object[] { DataFormat.Decimal, DataFormat.Hex, DataFormat.Binary, DataFormat.Utf8String, DataFormat.ASCIIString, DataFormat.Float, DataFormat.Double, DataFormat.Int16, DataFormat.Int32, DataFormat.UInt16, DataFormat.UInt32, DataFormat.Int64, DataFormat.UInt64 });
+            convertResultCb.Location = new Point(698, 684);
+            convertResultCb.Name = "convertResultCb";
+            convertResultCb.Size = new Size(145, 33);
+            convertResultCb.TabIndex = 28;
+            convertResultCb.SelectedIndexChanged += convertCb_SelectedIndexChanged;
+            convertResultCb.SelectedIndex = 2;
+            // 
+            // convertReqCb
+            // 
+           
+            convertReqCb.FormattingEnabled = true;
+            convertReqCb.Items.AddRange(new object[] { DataFormat.Decimal, DataFormat.Hex, DataFormat.Binary, DataFormat.Utf8String, DataFormat.ASCIIString, DataFormat.Float, DataFormat.Double, DataFormat.Int16, DataFormat.Int32, DataFormat.UInt16, DataFormat.UInt32, DataFormat.Int64, DataFormat.UInt64 });
+            convertReqCb.Location = new Point(423, 684);
+            convertReqCb.Name = "convertReqCb";
+            convertReqCb.Size = new Size(145, 33);
+            convertReqCb.TabIndex = 29;
+            convertReqCb.SelectedIndex = 1;
+            // 
+            // Connection
+            // 
+            ConnectionTimer.Tick += ConnectionTimer_Tick;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.SlateGray;
+            BackColor = Color.Gray;
             ClientSize = new Size(1898, 1024);
+            Controls.Add(convertReqCb);
+            Controls.Add(convertResultCb);
+            Controls.Add(convertResultTextBox);
+            Controls.Add(convertReqTextBox);
             Controls.Add(responseFormatCb);
             Controls.Add(sendFormatCb);
             Controls.Add(clrfCheckBox);
@@ -337,7 +400,7 @@
             Controls.Add(keyDeleteButton);
             Controls.Add(keyAddButton);
             Controls.Add(loopColor);
-            Controls.Add(button2);
+            Controls.Add(clearLogBtn);
             Controls.Add(allSelect);
             Controls.Add(loopCheck);
             Controls.Add(button1);
@@ -368,7 +431,7 @@
         private Label label3;
         private CheckBox loopCheck;
         private CheckBox allSelect;
-        private Button button2;
+        private Button clearLogBtn;
         private Panel loopColor;
         private System.Windows.Forms.Timer colorTimer;
         private Button keyAddButton;
@@ -382,5 +445,10 @@
         private DataGridViewTextBoxColumn Key;
         private DataGridViewTextBoxColumn Response;
         private DataGridViewTextBoxColumn Formated;
+        private RichTextBox convertReqTextBox;
+        private RichTextBox convertResultTextBox;
+        private ComboBox convertResultCb;
+        private ComboBox convertReqCb;
+        private System.Windows.Forms.Timer ConnectionTimer;
     }
 }
