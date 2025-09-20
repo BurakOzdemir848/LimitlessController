@@ -23,6 +23,10 @@ namespace LimitlessController
                 }
                 catch { return false; }
             }
+            set
+            {
+                
+            }
         }
         public async Task<bool> ConnectAsync(string ip, int port, CancellationToken token = default)
         {
@@ -38,6 +42,7 @@ namespace LimitlessController
             }
             catch (Exception)
             {
+                MessageBox.Show("Connection Down!");
                 return false;
             }
 
@@ -46,7 +51,7 @@ namespace LimitlessController
         {
 
             if (!IsConnected)
-                throw new InvalidOperationException("Connec to the server before ");
+                throw new InvalidOperationException("Connect to the server");
             if (clrf)
             {
                 byte[] crlf = Encoding.ASCII.GetBytes("\r\n");
