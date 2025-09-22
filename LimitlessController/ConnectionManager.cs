@@ -14,20 +14,15 @@ namespace LimitlessController
             {
                 try
                 {
-
-                    if (_client.Client == null || _client == null) return false;
+                    if (_client == null || _client.Client == null) return false;
                     var socket = _client.Client;
-                    if (!socket.Connected) return false;
-
-                    return true;
+                    return socket.Connected;
                 }
                 catch { return false; }
             }
-            set
-            {
-                
-            }
+            set { }
         }
+
         public async Task<bool> ConnectAsync(string ip, int port, CancellationToken token = default)
         {
             try
@@ -35,23 +30,20 @@ namespace LimitlessController
                 _client = new TcpClient();
                 await _client.ConnectAsync(ip, port);
                 _stream = _client.GetStream();
-
-
                 return true;
-
             }
             catch (Exception)
             {
                 MessageBox.Show("Connection Down!");
                 return false;
             }
-
         }
-        public async Task<byte[]> SendAsync(bool clrf, bool bigEndian, byte[] message, CancellationToken token = default)
-        {
 
+        public async Task<bool> SendAsync(bool clrf, byte[] message, CancellationToken token = default)
+        {
             if (!IsConnected)
-                throw new InvalidOperationException("Connect to the server");
+                throw new InvalidOperationException("Connect to the server first");
+
             if (clrf)
             {
                 byte[] crlf = Encoding.ASCII.GetBytes("\r\n");
@@ -62,17 +54,28 @@ namespace LimitlessController
             {
                 await _stream.WriteAsync(message, 0, message.Length, token);
             }
-
-            byte[] responseData = new byte[1028];
-            int bytes = await _stream.ReadAsync(responseData, 0, responseData.Length, token);
-
-            return responseData.Take(bytes).ToArray();
+            return true;
         }
 
+        public async Task<byte[]> ReceiveAsync(TimeSpan? idleTimeout = null, CancellationToken token = default)
+        {
+            if (!IsConnected)
+                throw new InvalidOperationException("Connect to the server first");
+
+            var buffer = new byte[150];
+            using var ms = new MemoryStream();
+
+            int bytesRead;
+            do
+            {
+                bytesRead = await _stream.ReadAsync(buffer, 0, buffer.Length);
+                ms.Write(buffer, 0, bytesRead);
+            }
+            while (bytesRead == buffer.Length && _stream.DataAvailable);
 
 
-
-
+            return ms.ToArray();
+        }
         public void Disconnect()
         {
             _stream?.Close();
@@ -81,10 +84,6 @@ namespace LimitlessController
             _client = null;
         }
 
-
-
-
-        public void Dispose() { Disconnect(); }
-
+        public void Dispose() => Disconnect();
     }
 }

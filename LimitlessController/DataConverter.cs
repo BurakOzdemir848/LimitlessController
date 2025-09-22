@@ -9,7 +9,7 @@ namespace LimitlessController
     {
         public static byte[] ConvertRequest(string data, DataFormat format, bool isBigEndian, bool clrf)
         {
-            var parts = data.Split(new[] { ' ', ',', ':', ';', '_', '-' }, StringSplitOptions.RemoveEmptyEntries);
+            var parts = data.Split(new[] { ' ', ',', ':', ';', '_' }, StringSplitOptions.RemoveEmptyEntries);
             try
             {
                 byte[] bytes;
@@ -21,6 +21,7 @@ namespace LimitlessController
                             var cleaned = data.Replace(" ", "").Replace(",", "").Replace(":", "").Replace(";", "")
                                               .Replace("-", "").Replace("_", "")
                                               .Replace("0x", "", StringComparison.OrdinalIgnoreCase);
+                            
                             if (cleaned.Length == 0) return AddCrlfIfNeeded(Array.Empty<byte>(), clrf);
                             if ((cleaned.Length % 2) != 0) throw new FormatException("Hex length must be even!");
 
@@ -155,29 +156,28 @@ namespace LimitlessController
 
                     case DataFormat.Decimal:
                         {
-                            bytes = new byte[parts.Length * 16];
-                            for (int i = 0; i < parts.Length; i++)
-                            {
-                                decimal v = decimal.Parse(parts[i], NumberStyles.Number, CultureInfo.InvariantCulture);
-                                int[] bits = decimal.GetBits(v);
+                            decimal v = decimal.Parse(parts[0], CultureInfo.InvariantCulture);
+                            int[] bits = decimal.GetBits(v);
+                            bytes = new byte[16];
 
-                                if (isBigEndian)
-                                {
-                                    BinaryPrimitives.WriteInt32BigEndian(bytes.AsSpan(i * 16 + 0, 4), bits[0]);
-                                    BinaryPrimitives.WriteInt32BigEndian(bytes.AsSpan(i * 16 + 4, 4), bits[1]);
-                                    BinaryPrimitives.WriteInt32BigEndian(bytes.AsSpan(i * 16 + 8, 4), bits[2]);
-                                    BinaryPrimitives.WriteInt32BigEndian(bytes.AsSpan(i * 16 + 12, 4), bits[3]);
-                                }
-                                else
-                                {
-                                    BinaryPrimitives.WriteInt32LittleEndian(bytes.AsSpan(i * 16 + 0, 4), bits[0]);
-                                    BinaryPrimitives.WriteInt32LittleEndian(bytes.AsSpan(i * 16 + 4, 4), bits[1]);
-                                    BinaryPrimitives.WriteInt32LittleEndian(bytes.AsSpan(i * 16 + 8, 4), bits[2]);
-                                    BinaryPrimitives.WriteInt32LittleEndian(bytes.AsSpan(i * 16 + 12, 4), bits[3]);
-                                }
+                            if (isBigEndian)
+                            {
+                                BinaryPrimitives.WriteInt32BigEndian(bytes.AsSpan(0, 4), bits[0]);
+                                BinaryPrimitives.WriteInt32BigEndian(bytes.AsSpan(4, 4), bits[1]);
+                                BinaryPrimitives.WriteInt32BigEndian(bytes.AsSpan(8, 4), bits[2]);
+                                BinaryPrimitives.WriteInt32BigEndian(bytes.AsSpan(12, 4), bits[3]);
                             }
+                            else
+                            {
+                                BinaryPrimitives.WriteInt32LittleEndian(bytes.AsSpan(0, 4), bits[0]);
+                                BinaryPrimitives.WriteInt32LittleEndian(bytes.AsSpan(4, 4), bits[1]);
+                                BinaryPrimitives.WriteInt32LittleEndian(bytes.AsSpan(8, 4), bits[2]);
+                                BinaryPrimitives.WriteInt32LittleEndian(bytes.AsSpan(12, 4), bits[3]);
+                            }
+
                             return AddCrlfIfNeeded(bytes, clrf);
                         }
+
 
                     default:
                         throw new Exception("Error: Unsupported format for request conversion");
@@ -259,7 +259,8 @@ namespace LimitlessController
 
                     case DataFormat.Int16:
                         {
-                            if (data.Length % 2 != 0) return $"Error: Expected multiples of 2 bytes, got {data.Length}";
+                            if (data.Length % 2 != 0) return $"Error: Expected multiples of 8 bytes, got {data.Length}";
+
                             int n = data.Length / 2;
                             var sb = new StringBuilder();
                             for (int i = 0; i < n; i++)
@@ -275,7 +276,8 @@ namespace LimitlessController
 
                     case DataFormat.UInt16:
                         {
-                            if (data.Length % 2 != 0) return $"Error: Expected multiples of 2 bytes, got {data.Length}";
+                            if (data.Length % 2 != 0) return $"Error: Expected multiples of 8 bytes, got {data.Length}";
+
                             int n = data.Length / 2;
                             var sb = new StringBuilder();
                             for (int i = 0; i < n; i++)
@@ -324,6 +326,7 @@ namespace LimitlessController
                     case DataFormat.Int64:
                         {
                             if (data.Length % 8 != 0) return $"Error: Expected multiples of 8 bytes, got {data.Length}";
+
                             int n = data.Length / 8;
                             var sb = new StringBuilder();
                             for (int i = 0; i < n; i++)
@@ -355,38 +358,17 @@ namespace LimitlessController
 
                     case DataFormat.Decimal:
                         {
-                            if (data.Length % 16 != 0) return $"Error: Expected multiples of 16 bytes, got {data.Length}";
-                            int n = data.Length / 16;
-                            var sb = new StringBuilder();
-                            for (int i = 0; i < n; i++)
-                            {
-                                var s0 = new ReadOnlySpan<byte>(data, i * 16 + 0, 4);
-                                var s1 = new ReadOnlySpan<byte>(data, i * 16 + 4, 4);
-                                var s2 = new ReadOnlySpan<byte>(data, i * 16 + 8, 4);
-                                var s3 = new ReadOnlySpan<byte>(data, i * 16 + 12, 4);
+                            if (data.Length != 16) return "Error: Expected 16 bytes";
 
-                                int lo, mid, hi, flags;
-                                if (isBigEndian)
-                                {
-                                    lo = BinaryPrimitives.ReadInt32BigEndian(s0);
-                                    mid = BinaryPrimitives.ReadInt32BigEndian(s1);
-                                    hi = BinaryPrimitives.ReadInt32BigEndian(s2);
-                                    flags = BinaryPrimitives.ReadInt32BigEndian(s3);
-                                }
-                                else
-                                {
-                                    lo = BinaryPrimitives.ReadInt32LittleEndian(s0);
-                                    mid = BinaryPrimitives.ReadInt32LittleEndian(s1);
-                                    hi = BinaryPrimitives.ReadInt32LittleEndian(s2);
-                                    flags = BinaryPrimitives.ReadInt32LittleEndian(s3);
-                                }
+                            int lo = isBigEndian ? BinaryPrimitives.ReadInt32BigEndian(data.AsSpan(0, 4)) : BinaryPrimitives.ReadInt32LittleEndian(data.AsSpan(0, 4));
+                            int mid = isBigEndian ? BinaryPrimitives.ReadInt32BigEndian(data.AsSpan(4, 4)) : BinaryPrimitives.ReadInt32LittleEndian(data.AsSpan(4, 4));
+                            int hi = isBigEndian ? BinaryPrimitives.ReadInt32BigEndian(data.AsSpan(8, 4)) : BinaryPrimitives.ReadInt32LittleEndian(data.AsSpan(8, 4));
+                            int flags = isBigEndian ? BinaryPrimitives.ReadInt32BigEndian(data.AsSpan(12, 4)) : BinaryPrimitives.ReadInt32LittleEndian(data.AsSpan(12, 4));
 
-                                var dec = new decimal(new int[] { lo, mid, hi, flags });
-                                if (i > 0) sb.Append(' ');
-                                sb.Append(dec.ToString(CultureInfo.InvariantCulture));
-                            }
-                            return sb.ToString();
+                            var dec = new decimal(new int[] { lo, mid, hi, flags });
+                            return dec.ToString(CultureInfo.InvariantCulture);
                         }
+
 
                     default:
                         return string.Join(" ", data.Select(b => b.ToString("X2", CultureInfo.InvariantCulture)));
