@@ -1,4 +1,4 @@
-﻿namespace LimitlessController
+﻿namespace LimitlessController.Core.Models
 {
     public enum DataFormat
     {

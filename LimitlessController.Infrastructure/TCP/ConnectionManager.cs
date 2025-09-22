@@ -1,9 +1,11 @@
-﻿using System.Net.Sockets;
+﻿using LimitlessController.Core;
+using System.Data;
+using System.Net.Sockets;
 using System.Text;
 
-namespace LimitlessController
+namespace LimitlessController.Infrastructure.Tcp
 {
-    public class ConnectionManager : IDisposable
+    public class ConnectionManager : IConnection
     {
         private TcpClient _client;
         private NetworkStream _stream;
@@ -34,7 +36,6 @@ namespace LimitlessController
             }
             catch (Exception)
             {
-                MessageBox.Show("Connection Down!");
                 return false;
             }
         }
@@ -82,6 +83,7 @@ namespace LimitlessController
             _client?.Close();
             _stream = null;
             _client = null;
+            IsConnected =false;
         }
 
         public void Dispose() => Disconnect();

@@ -1,9 +1,10 @@
-﻿using System.Buffers.Binary;
+﻿using LimitlessController.Core.Models;
+using System.Buffers.Binary;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 
-namespace LimitlessController
+namespace LimitlessController.Core.Services
 {
     public class DataConverter
     {
@@ -23,7 +24,7 @@ namespace LimitlessController
                                               .Replace("0x", "", StringComparison.OrdinalIgnoreCase);
                             
                             if (cleaned.Length == 0) return AddCrlfIfNeeded(Array.Empty<byte>(), clrf);
-                            if ((cleaned.Length % 2) != 0) throw new FormatException("Hex length must be even!");
+                            if (cleaned.Length % 2 != 0) throw new FormatException("Hex length must be even!");
 
                             bytes = new byte[cleaned.Length / 2];
                             for (int i = 0; i < bytes.Length; i++)
@@ -37,7 +38,7 @@ namespace LimitlessController
                                               .Replace("-", "").Replace("_", "")
                                               .Replace("0b", "", StringComparison.OrdinalIgnoreCase);
                             if (cleaned.Length == 0) return AddCrlfIfNeeded(Array.Empty<byte>(), clrf);
-                            if ((cleaned.Length % 8) != 0) throw new FormatException("Binary length must be a multiple of 8!");
+                            if (cleaned.Length % 8 != 0) throw new FormatException("Binary length must be a multiple of 8!");
 
                             bytes = new byte[cleaned.Length / 8];
                             for (int i = 0; i < bytes.Length; i++)
