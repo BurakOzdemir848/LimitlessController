@@ -1,4 +1,4 @@
-using LimitlessController.Core;
+using LimitlessController.Core.Interfaces;
 using LimitlessController.Core.Models;
 using LimitlessController.Core.Services;
 using LimitlessController.Infrastructure.Services;
@@ -54,21 +54,27 @@ namespace LimitlessController
 
         private async void Send_Click(object sender, EventArgs e)
         {
+            MessageBox.Show($"Checked Keys SENT. Wait for {(int)timeoutMsUd.Value}ms to send another!");
+            
+            if (_connection.IsConnected==false) MessageBox.Show("Not connected to server.");
+
             cts = new CancellationTokenSource();
             var token = cts.Token;
             try
             {
-
-                if (_connection == null) MessageBox.Show("Not connected to server.");
                 if (!loopCheck.Checked)
                 {
+                    if (keyList.CheckedIndices.Count == 0) { MessageBox.Show("Select at least 1 key!"); return; }
+
                     foreach (ListViewItem item in keyList.CheckedItems)
                     {
+                        if (item == null) break;
                         var result = await _messageService.SendAndReceiveAsync(item.Text,
                             (DataFormat)sendFormatCb.SelectedIndex,
                             (DataFormat)responseFormatCb.SelectedIndex,
                             endianCheck.Checked,
                             clrfCheckBox.Checked,
+                            (int)timeoutMsUd.Value,
                             token);
                         resultView.Rows.Add(item.Text, result.HexDump, result.Formatted);
                     }
@@ -78,33 +84,38 @@ namespace LimitlessController
                     MessageBox.Show("Cancel the active loop");
                     return;
                 }
-                loopRunning = true;
-                try
+                if (loopCheck.Checked)
                 {
-                    while (!token.IsCancellationRequested)
+                    loopRunning = true;
+                    try
                     {
-                        foreach (ListViewItem item in keyList.CheckedItems)
+                        while (!token.IsCancellationRequested)
                         {
-                            if (token.IsCancellationRequested) { loopRunning = false; break; }
+                            if (keyList.CheckedIndices.Count == 0) { MessageBox.Show("Select at least 1 key!"); return; }
+                            foreach (ListViewItem item in keyList.CheckedItems)
+                            {
+                                if (item == null) break;
+                                if (token.IsCancellationRequested) { loopRunning = false; break; }
 
-                            greenVisible = true;
-                            colorTimer.Start();
-                            loopColor.Invalidate();
+                                greenVisible = true;
+                                colorTimer.Start();
+                                loopColor.Invalidate();
 
-                            var result = await _messageService.SendAndReceiveAsync(item.Text,
-                            (DataFormat)sendFormatCb.SelectedIndex,
-                            (DataFormat)responseFormatCb.SelectedIndex,
-                            endianCheck.Checked,
-                            clrfCheckBox.Checked,
-                            token);
+                                var result = await _messageService.SendAndReceiveAsync(item.Text,
+                                (DataFormat)sendFormatCb.SelectedIndex,
+                                (DataFormat)responseFormatCb.SelectedIndex,
+                                endianCheck.Checked,
+                                clrfCheckBox.Checked,
+                                (int)timeoutMsUd.Value,
+                                token);
 
-                            resultView.Rows.Add(item.Text, result.HexDump, result.Formatted);
-                            await Task.Delay(1000, token);
+                                resultView.Rows.Add(item.Text, result.HexDump, result.Formatted);
+                                await Task.Delay(1000, token);
+                            }
                         }
                     }
+                    finally { loopRunning = false; }
                 }
-                finally { loopRunning = false; }
-
             }
             catch (Exception ex)
             {
@@ -116,11 +127,11 @@ namespace LimitlessController
         private void resultView_CellContentClick(object sender, DataGridViewCellEventArgs e)
 
         {
+            resultView.ScrollBars = ScrollBars.Both;
             resultView.EditMode = DataGridViewEditMode.EditOnKeystrokeOrF2;
             resultView.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             resultView.AllowUserToAddRows = false;
             resultView.SelectionMode = DataGridViewSelectionMode.CellSelect;
-            resultView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
 
         private void button1_Click(object sender, EventArgs e) //stop loop btn
@@ -158,7 +169,7 @@ namespace LimitlessController
         private void Form1_Load_1(object sender, EventArgs e)
         {
             LoadFromTxt();
-            ConnectionTimer.Interval = 1000;
+            ConnectionTimer.Interval = 500;
             ConnectionTimer.Tick += ConnectionTimer_Tick;
             sendFormatCb.SelectedIndex = 4;
             responseFormatCb.SelectedIndex = 4;
@@ -262,8 +273,8 @@ namespace LimitlessController
         {
             try
             {
-                byte[] result = DataConverter.ConvertRequest(convertReqTextBox.Text, (DataFormat)convertReqCb.SelectedItem, endianCheck.Checked, clrfCheckBox.Checked);
-                convertResultTextBox.Text = DataConverter.ConvertResponse(result, (DataFormat)convertResultCb.SelectedItem, endianCheck.Checked);
+                byte[] result = _factory.Resolve((DataFormat)convertReqCb.SelectedItem).ConvertRequest(convertReqTextBox.Text, endianCheck.Checked, clrfCheckBox.Checked);
+                convertResultTextBox.Text = _factory.Resolve((DataFormat)convertResultCb.SelectedItem).ConvertResponse(result, endianCheck.Checked);
             }
             catch { convertResultTextBox.Clear(); }
         }
@@ -273,10 +284,14 @@ namespace LimitlessController
 
         private void resultView_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
         {
+            resultView.ScrollBars = ScrollBars.Both;
             if (e.Control is TextBox tb)
             {
+
                 tb.ReadOnly = true;
                 tb.ShortcutsEnabled = true;
+                tb.ContextMenuStrip = contextMenuStrip1;
+
             }
         }
         private void ConnectionTimer_Tick(object sender, EventArgs e)
@@ -307,17 +322,19 @@ namespace LimitlessController
 
         private void sendMessageBox_TextChanged(object sender, EventArgs e)
         {
-
         }
 
         private async void sendMessageBtn_Click(object sender, EventArgs e)
         {
+            MessageBox.Show($"The message has been sent. Wait for {(int)timeoutMsUd.Value}ms to send another!");
+            if (_connection == null) MessageBox.Show("Not connected to server.");
+
             cts = new CancellationTokenSource();
             var token = cts.Token;
+            if (sendMessageBox.Text == string.Empty || sendMessageBox.Text == null) { MessageBox.Show("Enter a message to send."); return; }
             try
             {
 
-                if (_connection == null) MessageBox.Show("Not connected to server.");
                 if (!loopCheck.Checked)
                 {
                     var result = await _messageService.SendAndReceiveAsync(sendMessageBox.Text,
@@ -325,6 +342,7 @@ namespace LimitlessController
                         (DataFormat)responseFormatCb.SelectedIndex,
                         endianCheck.Checked,
                         clrfCheckBox.Checked,
+                        (int)timeoutMsUd.Value,
                         token);
 
                     resultView.Rows.Add(sendMessageBox.Text, result.HexDump, result.Formatted);
@@ -350,6 +368,7 @@ namespace LimitlessController
                             (DataFormat)responseFormatCb.SelectedIndex,
                             endianCheck.Checked,
                             clrfCheckBox.Checked,
+                            (int)timeoutMsUd.Value,
                             token);
 
                         resultView.Rows.Add(sendMessageBox.Text, result.HexDump, result.Formatted);
@@ -363,6 +382,12 @@ namespace LimitlessController
                 MessageBox.Show($"Error: {ex.Message}");
             }
         }
+
+        private void Timer_Tick(object? sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
         private void label5_Click(object sender, EventArgs e)
         {
 
@@ -398,29 +423,15 @@ namespace LimitlessController
 
         }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void toHexToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-
-
-        }
-        private void toToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void contextMenuStrip1_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
 
         }
 
         private void resultView_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
+
         {
+            resultView.ScrollBars = ScrollBars.Both;
             if (e.Button == MouseButtons.Right && e.RowIndex >= 0 && e.ColumnIndex >= 0)
             {
                 resultView.ClearSelection();
@@ -430,10 +441,6 @@ namespace LimitlessController
             }
         }
 
-        private void toDecimalToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void ConvertCellToFormat(DataFormat targetFormat)
         {
@@ -446,37 +453,127 @@ namespace LimitlessController
                 selectedText = resultView.SelectedCells[0].Value?.ToString();
             }
             if (string.IsNullOrEmpty(selectedText)) return;
-
-            var cell = resultView.SelectedCells[0];
-            var col = cell.OwningColumn.Name;
-            byte[] formatedMessage = null;
-
-            if (col == "Response")
+            try
             {
-                formatedMessage = _factory.Resolve(DataFormat.Hex).ConvertRequest(selectedText,endianCheck.Checked,clrfCheckBox.Checked);
-                convertReqCb.SelectedItem = DataFormat.Hex;
+                var cell = resultView.SelectedCells[0];
+                var col = cell.OwningColumn.Name;
+                byte[] formatedMessage = null;
 
+                if (col == "Response")
+                {
+                    formatedMessage = _factory.Resolve(DataFormat.Hex).ConvertRequest(selectedText, endianCheck.Checked, clrfCheckBox.Checked);
+                    convertReqCb.SelectedItem = DataFormat.Hex;
+
+                }
+                else if (col == "Formated")
+                {
+                    formatedMessage = _factory.Resolve((DataFormat)responseFormatCb.SelectedIndex).ConvertRequest(selectedText, endianCheck.Checked, clrfCheckBox.Checked);
+                    convertReqCb.SelectedItem = responseFormatCb.SelectedItem;
+
+                }
+                else
+                { MessageBox.Show("Select response or formated colums cell"); }
+                string result = _factory.Resolve(targetFormat).ConvertResponse(formatedMessage, endianCheck.Checked);
+
+                convertResultTextBox.Clear();
+                convertReqTextBox.Clear();
+                convertReqTextBox.Text = selectedText;
+                convertResultTextBox.Text = result;
+                convertResultCb.SelectedItem = targetFormat;
             }
-            else if (col == "Formated")
-            {
-                formatedMessage = _factory.Resolve((DataFormat)responseFormatCb.SelectedIndex).ConvertRequest(selectedText, endianCheck.Checked, clrfCheckBox.Checked);
-                convertReqCb.SelectedItem = (DataFormat)responseFormatCb.SelectedIndex;
-
-            }
-            else
-            { MessageBox.Show("Select response or formated colums cell"); }
-            string result = _factory.Resolve(targetFormat).ConvertResponse(formatedMessage, endianCheck.Checked);
-
-            convertResultTextBox.Clear();
-            convertReqTextBox.Clear();
-            convertResultCb.SelectedItem = DataFormat.Hex;
-            convertReqTextBox.Text = selectedText;
-            convertResultTextBox.Text = result;
-
+            catch (Exception ex) { MessageBox.Show($"Error: {ex.Message}"); }
         }
         private void toHexStripMenuItem1_Click(object sender, EventArgs e)
         {
             ConvertCellToFormat(DataFormat.Hex);
+
+        }
+        private void toDecimalToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ConvertCellToFormat(DataFormat.Decimal);
+
+        }
+
+        private void toToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ConvertCellToFormat(DataFormat.Binary);
+
+        }
+
+        private void toUtf8StringToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ConvertCellToFormat(DataFormat.Utf8String);
+
+        }
+
+        private void toASCIIStringToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ConvertCellToFormat(DataFormat.ASCIIString);
+
+        }
+
+        private void toFloatToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ConvertCellToFormat(DataFormat.Float);
+
+        }
+
+        private void toDoubleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ConvertCellToFormat(DataFormat.Double);
+
+        }
+
+        private void toInt16ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ConvertCellToFormat(DataFormat.Int16);
+
+        }
+
+        private void toInt32ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ConvertCellToFormat(DataFormat.Int32);
+
+        }
+
+        private void toUInt16ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ConvertCellToFormat(DataFormat.UInt16);
+
+
+        }
+
+        private void toUInt32ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ConvertCellToFormat(DataFormat.UInt32);
+
+        }
+
+        private void toInt64ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ConvertCellToFormat(DataFormat.Int64);
+
+        }
+
+        private void toUInt64ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ConvertCellToFormat(DataFormat.UInt64);
+
+        }
+
+        private void copyTheCellToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (resultView.CurrentCell != null)
+            {
+                string result = resultView.CurrentCell.Value.ToString();
+                if (!string.IsNullOrEmpty(result))
+                { Clipboard.SetText(result); }
+            }
+
+        }
+
+        private void label15_Click(object sender, EventArgs e)
+        {
 
         }
     }

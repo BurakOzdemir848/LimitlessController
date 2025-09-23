@@ -1,5 +1,4 @@
-﻿using LimitlessController.Core;
-using System.Data;
+﻿using LimitlessController.Core.Interfaces;
 using System.Net.Sockets;
 using System.Text;
 
@@ -30,6 +29,8 @@ namespace LimitlessController.Infrastructure.Tcp
             try
             {
                 _client = new TcpClient();
+
+                _client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
                 await _client.ConnectAsync(ip, port);
                 _stream = _client.GetStream();
                 return true;
@@ -58,7 +59,7 @@ namespace LimitlessController.Infrastructure.Tcp
             return true;
         }
 
-        public async Task<byte[]> ReceiveAsync(TimeSpan? idleTimeout = null, CancellationToken token = default)
+        public async Task<byte[]> ReceiveAsync(int timeoutMs, CancellationToken token = default)
         {
             if (!IsConnected)
                 throw new InvalidOperationException("Connect to the server first");
@@ -66,15 +67,29 @@ namespace LimitlessController.Infrastructure.Tcp
             var buffer = new byte[150];
             using var ms = new MemoryStream();
 
-            int bytesRead;
-            do
+            while (true)
             {
-                bytesRead = await _stream.ReadAsync(buffer, 0, buffer.Length);
-                ms.Write(buffer, 0, bytesRead);
+                var readTask = _stream.ReadAsync(buffer, 0, buffer.Length, token);
+                var completed = await Task.WhenAny(readTask, Task.Delay(timeoutMs, token));
+
+                if (completed != readTask)
+                {
+                    if (ms.Length > 0)
+                    {
+                        return ms.ToArray();
+                    }
+                    throw new TimeoutException($"No response received within {timeoutMs}ms, change your timeout or ensure your message");
+                }
+                var bytesRead = await readTask;
+                if (bytesRead == 0)
+                {
+                    if (ms.Length > 0) return ms.ToArray();
+                    throw new IOException("Remote host closed connection");
+                }
+                ms.Write(buffer,0, bytesRead);
+                if (!_stream.DataAvailable) break;
+
             }
-            while (bytesRead == buffer.Length && _stream.DataAvailable);
-
-
             return ms.ToArray();
         }
         public void Disconnect()
@@ -83,7 +98,7 @@ namespace LimitlessController.Infrastructure.Tcp
             _client?.Close();
             _stream = null;
             _client = null;
-            IsConnected =false;
+            IsConnected = false;
         }
 
         public void Dispose() => Disconnect();

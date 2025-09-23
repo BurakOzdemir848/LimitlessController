@@ -1,4 +1,4 @@
-﻿using LimitlessController.Core;
+﻿using LimitlessController.Core.Interfaces;
 using LimitlessController.Core.Models;
 using LimitlessController.Core.Services;
 using LimitlessController.Infrastructure.Services;

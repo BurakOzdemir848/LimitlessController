@@ -1,4 +1,4 @@
-﻿using LimitlessController.Core;
+﻿using LimitlessController.Core.Interfaces;
 using LimitlessController.Core.Models;
 using LimitlessController.Core.Services;
 
@@ -21,9 +21,10 @@ namespace LimitlessController.Infrastructure.Services
             DataFormat responseFormat,
             bool isBigEndian,
             bool clrf,
+            int timeoutMs,
             CancellationToken token)
         {
-
+            if(requestText== null) { throw new ArgumentNullException(nameof(requestText)); }
             var requestConverter = _factory.Resolve(requestFormat);
             byte[] requestBytes = requestConverter.ConvertRequest(requestText, isBigEndian, clrf);
 
@@ -31,7 +32,7 @@ namespace LimitlessController.Infrastructure.Services
             await _connection.SendAsync(clrf, requestBytes, token);
 
 
-            byte[] response = await _connection.ReceiveAsync(null, token);
+            byte[] response = await _connection.ReceiveAsync(timeoutMs, token);
             if (response == null || response.Length == 0)
                 throw new InvalidOperationException("No response received!");
 
