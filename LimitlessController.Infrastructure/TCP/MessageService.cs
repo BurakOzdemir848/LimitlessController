@@ -2,7 +2,7 @@
 using LimitlessController.Core.Models;
 using LimitlessController.Core.Services;
 
-namespace LimitlessController.Infrastructure.Services
+namespace LimitlessController.Infrastructure.TCP
 {
     public class MessageService
     {
@@ -32,7 +32,7 @@ namespace LimitlessController.Infrastructure.Services
             await _connection.SendAsync(clrf, requestBytes, token);
 
 
-            byte[] response = await _connection.ReceiveAsync(timeoutMs, token);
+            byte[] response = await _connection.ReceiveAsync(timeoutMs,clrf, token);
             if (response == null || response.Length == 0)
                 throw new InvalidOperationException("No response received!");
 

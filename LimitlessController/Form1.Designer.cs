@@ -32,7 +32,7 @@ namespace LimitlessController
         {
             components = new System.ComponentModel.Container();
             ColumnHeader KEYS;
-            send = new Button();
+            btnSendKeys = new Button();
             resultView = new DataGridView();
             Key = new DataGridViewTextBoxColumn();
             Response = new DataGridViewTextBoxColumn();
@@ -53,62 +53,62 @@ namespace LimitlessController
             toInt64ToolStripMenuItem = new ToolStripMenuItem();
             toUInt64ToolStripMenuItem = new ToolStripMenuItem();
             copyTheCellToolStripMenuItem = new ToolStripMenuItem();
-            ipPortPanel = new Panel();
-            disconnectButton = new Button();
-            label3 = new Label();
-            connectIp = new Button();
-            portBox = new TextBox();
-            ipBox = new TextBox();
-            label2 = new Label();
-            label1 = new Label();
-            button1 = new Button();
-            loopCheck = new CheckBox();
-            allSelect = new CheckBox();
+            panelIpPort = new Panel();
+            btnDisconnect = new Button();
+            lblConnection = new Label();
+            btnConnect = new Button();
+            boxPort = new TextBox();
+            boxIp = new TextBox();
+            lblPort = new Label();
+            lblIp = new Label();
+            btnStopLoop = new Button();
+            chckLoop = new CheckBox();
+            chckSelectAll = new CheckBox();
             clearLogBtn = new Button();
             loopColor = new Panel();
             colorTimer = new System.Windows.Forms.Timer(components);
-            keyAddButton = new Button();
+            btnKeyAdd = new Button();
             keyDeleteButton = new Button();
             keyTextBox = new TextBox();
             keyList = new ListView();
-            clrfCheckBox = new CheckBox();
-            sendFormatCb = new ComboBox();
-            responseFormatCb = new ComboBox();
-            convertReqTextBox = new RichTextBox();
-            convertResultTextBox = new RichTextBox();
-            convertResultCb = new ComboBox();
-            convertReqCb = new ComboBox();
+            chckClrf = new CheckBox();
+            cbSendFormat = new ComboBox();
+            cbResponseFormat = new ComboBox();
+            txtConvertRequest = new RichTextBox();
+            txtConvertResult = new RichTextBox();
+            cbConvertResult = new ComboBox();
+            cbConvertReq = new ComboBox();
             ConnectionTimer = new System.Windows.Forms.Timer(components);
-            endianCheck = new CheckBox();
+            chckEndian = new CheckBox();
             panel1 = new Panel();
-            panel4 = new Panel();
+            panelMessageOptions = new Panel();
             label15 = new Label();
-            timeoutMsUd = new NumericUpDown();
-            label13 = new Label();
+            udTimeout = new NumericUpDown();
+            lblOr = new Label();
             panel5 = new Panel();
-            label12 = new Label();
-            label7 = new Label();
-            label11 = new Label();
-            sendMessageBox = new TextBox();
-            label4 = new Label();
-            label10 = new Label();
-            sendMessageBtn = new Button();
-            panel3 = new Panel();
-            label9 = new Label();
-            label8 = new Label();
-            label14 = new Label();
+            lblSendMessage = new Label();
+            lblResponseFormat = new Label();
+            lblMessageOptions = new Label();
+            boxSendMessage = new TextBox();
+            lblRequestFormat = new Label();
+            lblSendKeys = new Label();
+            btnSendMessage = new Button();
+            panelListOptions = new Panel();
+            lblDeleteKeys = new Label();
+            lblKeyOptions = new Label();
+            lblAddKey = new Label();
             label5 = new Label();
-            panel2 = new Panel();
+            panelConverter = new Panel();
             label6 = new Label();
             KEYS = new ColumnHeader();
             ((System.ComponentModel.ISupportInitialize)resultView).BeginInit();
             contextMenuStrip1.SuspendLayout();
-            ipPortPanel.SuspendLayout();
+            panelIpPort.SuspendLayout();
             panel1.SuspendLayout();
-            panel4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)timeoutMsUd).BeginInit();
-            panel3.SuspendLayout();
-            panel2.SuspendLayout();
+            panelMessageOptions.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)udTimeout).BeginInit();
+            panelListOptions.SuspendLayout();
+            panelConverter.SuspendLayout();
             SuspendLayout();
             // 
             // KEYS
@@ -116,18 +116,18 @@ namespace LimitlessController
             KEYS.Text = "KEYS";
             KEYS.Width = 300;
             // 
-            // send
+            // btnSendKeys
             // 
-            send.BackColor = SystemColors.ActiveCaption;
-            send.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 162);
-            send.ForeColor = SystemColors.ActiveCaptionText;
-            send.Location = new Point(45, 368);
-            send.Name = "send";
-            send.Size = new Size(113, 58);
-            send.TabIndex = 35;
-            send.Text = "Send Keys";
-            send.UseVisualStyleBackColor = false;
-            send.Click += Send_Click;
+            btnSendKeys.BackColor = SystemColors.ActiveCaption;
+            btnSendKeys.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 162);
+            btnSendKeys.ForeColor = SystemColors.ActiveCaptionText;
+            btnSendKeys.Location = new Point(45, 368);
+            btnSendKeys.Name = "btnSendKeys";
+            btnSendKeys.Size = new Size(113, 58);
+            btnSendKeys.TabIndex = 35;
+            btnSendKeys.Text = "Send Keys";
+            btnSendKeys.UseVisualStyleBackColor = false;
+            btnSendKeys.Click += Send_Click;
             // 
             // resultView
             // 
@@ -281,124 +281,124 @@ namespace LimitlessController
             copyTheCellToolStripMenuItem.Text = "Copy the Cell";
             copyTheCellToolStripMenuItem.Click += copyTheCellToolStripMenuItem_Click;
             // 
-            // ipPortPanel
+            // panelIpPort
             // 
-            ipPortPanel.BackColor = SystemColors.ActiveCaption;
-            ipPortPanel.BorderStyle = BorderStyle.Fixed3D;
-            ipPortPanel.Controls.Add(disconnectButton);
-            ipPortPanel.Controls.Add(label3);
-            ipPortPanel.Controls.Add(connectIp);
-            ipPortPanel.Controls.Add(portBox);
-            ipPortPanel.Controls.Add(ipBox);
-            ipPortPanel.Controls.Add(label2);
-            ipPortPanel.Controls.Add(label1);
-            ipPortPanel.Location = new Point(1427, 737);
-            ipPortPanel.Name = "ipPortPanel";
-            ipPortPanel.Size = new Size(470, 282);
-            ipPortPanel.TabIndex = 11;
+            panelIpPort.BackColor = SystemColors.ActiveCaption;
+            panelIpPort.BorderStyle = BorderStyle.Fixed3D;
+            panelIpPort.Controls.Add(btnDisconnect);
+            panelIpPort.Controls.Add(lblConnection);
+            panelIpPort.Controls.Add(btnConnect);
+            panelIpPort.Controls.Add(boxPort);
+            panelIpPort.Controls.Add(boxIp);
+            panelIpPort.Controls.Add(lblPort);
+            panelIpPort.Controls.Add(lblIp);
+            panelIpPort.Location = new Point(1427, 737);
+            panelIpPort.Name = "panelIpPort";
+            panelIpPort.Size = new Size(470, 282);
+            panelIpPort.TabIndex = 11;
             // 
-            // disconnectButton
+            // btnDisconnect
             // 
-            disconnectButton.BackColor = Color.Red;
-            disconnectButton.Location = new Point(259, 178);
-            disconnectButton.Name = "disconnectButton";
-            disconnectButton.Size = new Size(116, 57);
-            disconnectButton.TabIndex = 14;
-            disconnectButton.Text = "Disconnect";
-            disconnectButton.UseVisualStyleBackColor = false;
-            disconnectButton.Click += button3_Click;
+            btnDisconnect.BackColor = Color.Red;
+            btnDisconnect.Location = new Point(259, 178);
+            btnDisconnect.Name = "btnDisconnect";
+            btnDisconnect.Size = new Size(116, 57);
+            btnDisconnect.TabIndex = 14;
+            btnDisconnect.Text = "Disconnect";
+            btnDisconnect.UseVisualStyleBackColor = false;
+            btnDisconnect.Click += button3_Click;
             // 
-            // label3
+            // lblConnection
             // 
-            label3.AutoSize = true;
-            label3.BackColor = Color.Red;
-            label3.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 162);
-            label3.Location = new Point(150, 17);
-            label3.Name = "label3";
-            label3.Size = new Size(187, 32);
-            label3.TabIndex = 13;
-            label3.Text = "DISCONNECTED";
-            label3.Click += label3_Click;
+            lblConnection.AutoSize = true;
+            lblConnection.BackColor = Color.Red;
+            lblConnection.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 162);
+            lblConnection.Location = new Point(150, 17);
+            lblConnection.Name = "lblConnection";
+            lblConnection.Size = new Size(187, 32);
+            lblConnection.TabIndex = 13;
+            lblConnection.Text = "DISCONNECTED";
+            lblConnection.Click += label3_Click;
             // 
-            // connectIp
+            // btnConnect
             // 
-            connectIp.BackColor = Color.SteelBlue;
-            connectIp.Location = new Point(126, 178);
-            connectIp.Name = "connectIp";
-            connectIp.Size = new Size(114, 57);
-            connectIp.TabIndex = 13;
-            connectIp.Text = "Connect";
-            connectIp.UseVisualStyleBackColor = false;
-            connectIp.Click += ConnectBtn_Click;
+            btnConnect.BackColor = Color.SteelBlue;
+            btnConnect.Location = new Point(126, 178);
+            btnConnect.Name = "btnConnect";
+            btnConnect.Size = new Size(114, 57);
+            btnConnect.TabIndex = 13;
+            btnConnect.Text = "Connect";
+            btnConnect.UseVisualStyleBackColor = false;
+            btnConnect.Click += ConnectBtn_Click;
             // 
-            // portBox
+            // boxPort
             // 
-            portBox.Location = new Point(187, 118);
-            portBox.Name = "portBox";
-            portBox.Size = new Size(150, 31);
-            portBox.TabIndex = 13;
+            boxPort.Location = new Point(187, 118);
+            boxPort.Name = "boxPort";
+            boxPort.Size = new Size(150, 31);
+            boxPort.TabIndex = 13;
             // 
-            // ipBox
+            // boxIp
             // 
-            ipBox.Location = new Point(187, 73);
-            ipBox.Name = "ipBox";
-            ipBox.Size = new Size(150, 31);
-            ipBox.TabIndex = 12;
-            ipBox.TextChanged += ipBox_TextChanged;
+            boxIp.Location = new Point(187, 73);
+            boxIp.Name = "boxIp";
+            boxIp.Size = new Size(150, 31);
+            boxIp.TabIndex = 12;
+            boxIp.TextChanged += ipBox_TextChanged;
             // 
-            // label2
+            // lblPort
             // 
-            label2.AutoSize = true;
-            label2.Location = new Point(126, 132);
-            label2.Name = "label2";
-            label2.Size = new Size(44, 25);
-            label2.TabIndex = 1;
-            label2.Text = "Port";
+            lblPort.AutoSize = true;
+            lblPort.Location = new Point(126, 132);
+            lblPort.Name = "lblPort";
+            lblPort.Size = new Size(44, 25);
+            lblPort.TabIndex = 1;
+            lblPort.Text = "Port";
             // 
-            // label1
+            // lblIp
             // 
-            label1.AutoSize = true;
-            label1.Location = new Point(126, 87);
-            label1.Name = "label1";
-            label1.Size = new Size(27, 25);
-            label1.TabIndex = 0;
-            label1.Text = "IP";
-            label1.Click += label1_Click;
+            lblIp.AutoSize = true;
+            lblIp.Location = new Point(126, 87);
+            lblIp.Name = "lblIp";
+            lblIp.Size = new Size(27, 25);
+            lblIp.TabIndex = 0;
+            lblIp.Text = "IP";
+            lblIp.Click += label1_Click;
             // 
-            // button1
+            // btnStopLoop
             // 
-            button1.BackColor = Color.FromArgb(192, 0, 0);
-            button1.Location = new Point(295, 524);
-            button1.Name = "button1";
-            button1.Size = new Size(110, 58);
-            button1.TabIndex = 12;
-            button1.Text = "Stop Loop";
-            button1.UseVisualStyleBackColor = false;
-            button1.Click += button1_Click;
+            btnStopLoop.BackColor = Color.FromArgb(192, 0, 0);
+            btnStopLoop.Location = new Point(295, 524);
+            btnStopLoop.Name = "btnStopLoop";
+            btnStopLoop.Size = new Size(110, 58);
+            btnStopLoop.TabIndex = 12;
+            btnStopLoop.Text = "Stop Loop";
+            btnStopLoop.UseVisualStyleBackColor = false;
+            btnStopLoop.Click += button1_Click;
             // 
-            // loopCheck
+            // chckLoop
             // 
-            loopCheck.AutoSize = true;
-            loopCheck.BackColor = SystemColors.ActiveCaption;
-            loopCheck.Location = new Point(26, 216);
-            loopCheck.Name = "loopCheck";
-            loopCheck.Size = new Size(84, 29);
-            loopCheck.TabIndex = 13;
-            loopCheck.Text = "Loop ";
-            loopCheck.UseVisualStyleBackColor = false;
-            loopCheck.CheckedChanged += loopCheck_CheckedChanged;
+            chckLoop.AutoSize = true;
+            chckLoop.BackColor = SystemColors.ActiveCaption;
+            chckLoop.Location = new Point(26, 216);
+            chckLoop.Name = "chckLoop";
+            chckLoop.Size = new Size(84, 29);
+            chckLoop.TabIndex = 13;
+            chckLoop.Text = "Loop ";
+            chckLoop.UseVisualStyleBackColor = false;
+            chckLoop.CheckedChanged += loopCheck_CheckedChanged;
             // 
-            // allSelect
+            // chckSelectAll
             // 
-            allSelect.AutoSize = true;
-            allSelect.BackColor = SystemColors.ButtonFace;
-            allSelect.Location = new Point(3, -2);
-            allSelect.Name = "allSelect";
-            allSelect.Size = new Size(102, 29);
-            allSelect.TabIndex = 14;
-            allSelect.Text = "selectAll";
-            allSelect.UseVisualStyleBackColor = false;
-            allSelect.CheckedChanged += allSelect_CheckedChanged;
+            chckSelectAll.AutoSize = true;
+            chckSelectAll.BackColor = SystemColors.ButtonFace;
+            chckSelectAll.Location = new Point(3, -2);
+            chckSelectAll.Name = "chckSelectAll";
+            chckSelectAll.Size = new Size(102, 29);
+            chckSelectAll.TabIndex = 14;
+            chckSelectAll.Text = "selectAll";
+            chckSelectAll.UseVisualStyleBackColor = false;
+            chckSelectAll.CheckedChanged += allSelect_CheckedChanged;
             // 
             // clearLogBtn
             // 
@@ -424,16 +424,16 @@ namespace LimitlessController
             // 
             colorTimer.Tick += colorTimer_Tick;
             // 
-            // keyAddButton
+            // btnKeyAdd
             // 
-            keyAddButton.BackColor = SystemColors.ActiveCaption;
-            keyAddButton.Location = new Point(243, 147);
-            keyAddButton.Name = "keyAddButton";
-            keyAddButton.Size = new Size(75, 31);
-            keyAddButton.TabIndex = 18;
-            keyAddButton.Text = "Add";
-            keyAddButton.UseVisualStyleBackColor = false;
-            keyAddButton.Click += keyAddButton_Click;
+            btnKeyAdd.BackColor = SystemColors.ActiveCaption;
+            btnKeyAdd.Location = new Point(243, 147);
+            btnKeyAdd.Name = "btnKeyAdd";
+            btnKeyAdd.Size = new Size(75, 31);
+            btnKeyAdd.TabIndex = 18;
+            btnKeyAdd.Text = "Add";
+            btnKeyAdd.UseVisualStyleBackColor = false;
+            btnKeyAdd.Click += keyAddButton_Click;
             // 
             // keyDeleteButton
             // 
@@ -472,135 +472,135 @@ namespace LimitlessController
             keyList.View = View.Details;
             keyList.SelectedIndexChanged += listView1_SelectedIndexChanged;
             // 
-            // clrfCheckBox
+            // chckClrf
             // 
-            clrfCheckBox.AutoSize = true;
-            clrfCheckBox.BackColor = SystemColors.ActiveCaption;
-            clrfCheckBox.Location = new Point(26, 181);
-            clrfCheckBox.Name = "clrfCheckBox";
-            clrfCheckBox.Size = new Size(117, 29);
-            clrfCheckBox.TabIndex = 22;
-            clrfCheckBox.Text = "CLRF(\\r\\n)";
-            clrfCheckBox.UseVisualStyleBackColor = false;
+            chckClrf.AutoSize = true;
+            chckClrf.BackColor = SystemColors.ActiveCaption;
+            chckClrf.Location = new Point(26, 181);
+            chckClrf.Name = "chckClrf";
+            chckClrf.Size = new Size(117, 29);
+            chckClrf.TabIndex = 22;
+            chckClrf.Text = "CLRF(\\r\\n)";
+            chckClrf.UseVisualStyleBackColor = false;
             // 
-            // sendFormatCb
+            // cbSendFormat
             // 
-            sendFormatCb.DropDownStyle = ComboBoxStyle.DropDownList;
-            sendFormatCb.FormattingEnabled = true;
-            sendFormatCb.Items.AddRange(new object[] { DataFormat.Decimal, DataFormat.Hex, DataFormat.Binary, DataFormat.Utf8String, DataFormat.ASCIIString, DataFormat.Float, DataFormat.Double, DataFormat.Int16, DataFormat.Int32, DataFormat.UInt16, DataFormat.UInt32, DataFormat.Int64, DataFormat.UInt64 });
-            sendFormatCb.Location = new Point(26, 97);
-            sendFormatCb.Name = "sendFormatCb";
-            sendFormatCb.Size = new Size(173, 33);
-            sendFormatCb.TabIndex = 23;
-            sendFormatCb.SelectedIndexChanged += sendFormatCb_SelectedIndexChanged;
+            cbSendFormat.DropDownStyle = ComboBoxStyle.DropDownList;
+            cbSendFormat.FormattingEnabled = true;
+            cbSendFormat.Items.AddRange(new object[] { DataFormat.Decimal, DataFormat.Hex, DataFormat.Binary, DataFormat.Utf8String, DataFormat.ASCIIString, DataFormat.Float, DataFormat.Double, DataFormat.Int16, DataFormat.Int32, DataFormat.UInt16, DataFormat.UInt32, DataFormat.Int64, DataFormat.UInt64 });
+            cbSendFormat.Location = new Point(26, 97);
+            cbSendFormat.Name = "cbSendFormat";
+            cbSendFormat.Size = new Size(173, 33);
+            cbSendFormat.TabIndex = 23;
+            cbSendFormat.SelectedIndexChanged += sendFormatCb_SelectedIndexChanged;
             // 
-            // responseFormatCb
+            // cbResponseFormat
             // 
-            responseFormatCb.DropDownStyle = ComboBoxStyle.DropDownList;
-            responseFormatCb.FormattingEnabled = true;
-            responseFormatCb.Items.AddRange(new object[] { DataFormat.Decimal, DataFormat.Hex, DataFormat.Binary, DataFormat.Utf8String, DataFormat.ASCIIString, DataFormat.Float, DataFormat.Double, DataFormat.Int16, DataFormat.Int32, DataFormat.UInt16, DataFormat.UInt32, DataFormat.Int64, DataFormat.UInt64 });
-            responseFormatCb.Location = new Point(227, 97);
-            responseFormatCb.Name = "responseFormatCb";
-            responseFormatCb.Size = new Size(173, 33);
-            responseFormatCb.TabIndex = 24;
-            responseFormatCb.SelectedIndexChanged += responseFormatCb_SelectedIndexChanged;
+            cbResponseFormat.DropDownStyle = ComboBoxStyle.DropDownList;
+            cbResponseFormat.FormattingEnabled = true;
+            cbResponseFormat.Items.AddRange(new object[] { DataFormat.Decimal, DataFormat.Hex, DataFormat.Binary, DataFormat.Utf8String, DataFormat.ASCIIString, DataFormat.Float, DataFormat.Double, DataFormat.Int16, DataFormat.Int32, DataFormat.UInt16, DataFormat.UInt32, DataFormat.Int64, DataFormat.UInt64 });
+            cbResponseFormat.Location = new Point(227, 97);
+            cbResponseFormat.Name = "cbResponseFormat";
+            cbResponseFormat.Size = new Size(173, 33);
+            cbResponseFormat.TabIndex = 24;
+            cbResponseFormat.SelectedIndexChanged += responseFormatCb_SelectedIndexChanged;
             // 
-            // convertReqTextBox
+            // txtConvertRequest
             // 
-            convertReqTextBox.Location = new Point(83, 78);
-            convertReqTextBox.Name = "convertReqTextBox";
-            convertReqTextBox.Size = new Size(253, 186);
-            convertReqTextBox.TabIndex = 26;
-            convertReqTextBox.Text = "";
-            convertReqTextBox.TextChanged += convertReqTextBox_TextChanged;
+            txtConvertRequest.Location = new Point(83, 78);
+            txtConvertRequest.Name = "txtConvertRequest";
+            txtConvertRequest.Size = new Size(253, 186);
+            txtConvertRequest.TabIndex = 26;
+            txtConvertRequest.Text = "";
+            txtConvertRequest.TextChanged += convertReqTextBox_TextChanged;
             // 
-            // convertResultTextBox
+            // txtConvertResult
             // 
-            convertResultTextBox.BackColor = SystemColors.Window;
-            convertResultTextBox.Location = new Point(387, 78);
-            convertResultTextBox.Name = "convertResultTextBox";
-            convertResultTextBox.Size = new Size(233, 186);
-            convertResultTextBox.TabIndex = 27;
-            convertResultTextBox.Text = "";
-            convertResultTextBox.TextChanged += convertResultTextBox_TextChanged;
+            txtConvertResult.BackColor = SystemColors.Window;
+            txtConvertResult.Location = new Point(387, 78);
+            txtConvertResult.Name = "txtConvertResult";
+            txtConvertResult.Size = new Size(233, 186);
+            txtConvertResult.TabIndex = 27;
+            txtConvertResult.Text = "";
+            txtConvertResult.TextChanged += convertResultTextBox_TextChanged;
             // 
-            // convertResultCb
+            // cbConvertResult
             // 
-            convertResultCb.DropDownStyle = ComboBoxStyle.DropDownList;
-            convertResultCb.FormattingEnabled = true;
-            convertResultCb.Items.AddRange(new object[] { DataFormat.Decimal, DataFormat.Hex, DataFormat.Binary, DataFormat.Utf8String, DataFormat.ASCIIString, DataFormat.Float, DataFormat.Double, DataFormat.Int16, DataFormat.Int32, DataFormat.UInt16, DataFormat.UInt32, DataFormat.Int64, DataFormat.UInt64 });
-            convertResultCb.Location = new Point(387, 40);
-            convertResultCb.Name = "convertResultCb";
-            convertResultCb.Size = new Size(158, 33);
-            convertResultCb.TabIndex = 28;
-            convertResultCb.SelectedIndexChanged += convertResultCb_SelectedIndexChanged;
+            cbConvertResult.DropDownStyle = ComboBoxStyle.DropDownList;
+            cbConvertResult.FormattingEnabled = true;
+            cbConvertResult.Items.AddRange(new object[] { DataFormat.Decimal, DataFormat.Hex, DataFormat.Binary, DataFormat.Utf8String, DataFormat.ASCIIString, DataFormat.Float, DataFormat.Double, DataFormat.Int16, DataFormat.Int32, DataFormat.UInt16, DataFormat.UInt32, DataFormat.Int64, DataFormat.UInt64 });
+            cbConvertResult.Location = new Point(387, 40);
+            cbConvertResult.Name = "cbConvertResult";
+            cbConvertResult.Size = new Size(158, 33);
+            cbConvertResult.TabIndex = 28;
+            cbConvertResult.SelectedIndexChanged += convertResultCb_SelectedIndexChanged;
             // 
-            // convertReqCb
+            // cbConvertReq
             // 
-            convertReqCb.DropDownStyle = ComboBoxStyle.DropDownList;
-            convertReqCb.FormattingEnabled = true;
-            convertReqCb.Items.AddRange(new object[] { DataFormat.Decimal, DataFormat.Hex, DataFormat.Binary, DataFormat.Utf8String, DataFormat.ASCIIString, DataFormat.Float, DataFormat.Double, DataFormat.Int16, DataFormat.Int32, DataFormat.UInt16, DataFormat.UInt32, DataFormat.Int64, DataFormat.UInt64 });
-            convertReqCb.Location = new Point(184, 40);
-            convertReqCb.Name = "convertReqCb";
-            convertReqCb.Size = new Size(153, 33);
-            convertReqCb.TabIndex = 29;
-            convertReqCb.SelectedIndexChanged += convertReqCb_SelectedIndexChanged;
+            cbConvertReq.DropDownStyle = ComboBoxStyle.DropDownList;
+            cbConvertReq.FormattingEnabled = true;
+            cbConvertReq.Items.AddRange(new object[] { DataFormat.Decimal, DataFormat.Hex, DataFormat.Binary, DataFormat.Utf8String, DataFormat.ASCIIString, DataFormat.Float, DataFormat.Double, DataFormat.Int16, DataFormat.Int32, DataFormat.UInt16, DataFormat.UInt32, DataFormat.Int64, DataFormat.UInt64 });
+            cbConvertReq.Location = new Point(184, 40);
+            cbConvertReq.Name = "cbConvertReq";
+            cbConvertReq.Size = new Size(153, 33);
+            cbConvertReq.TabIndex = 29;
+            cbConvertReq.SelectedIndexChanged += convertReqCb_SelectedIndexChanged;
             // 
             // ConnectionTimer
             // 
             ConnectionTimer.Tick += ConnectionTimer_Tick;
             // 
-            // endianCheck
+            // chckEndian
             // 
-            endianCheck.AutoSize = true;
-            endianCheck.BackColor = SystemColors.ActiveCaption;
-            endianCheck.Location = new Point(26, 146);
-            endianCheck.Name = "endianCheck";
-            endianCheck.Size = new Size(186, 29);
-            endianCheck.TabIndex = 30;
-            endianCheck.Text = "Device Big Endian?";
-            endianCheck.UseVisualStyleBackColor = false;
-            endianCheck.CheckedChanged += endianCheck_CheckedChanged_1;
+            chckEndian.AutoSize = true;
+            chckEndian.BackColor = SystemColors.ActiveCaption;
+            chckEndian.Location = new Point(26, 146);
+            chckEndian.Name = "chckEndian";
+            chckEndian.Size = new Size(186, 29);
+            chckEndian.TabIndex = 30;
+            chckEndian.Text = "Device Big Endian?";
+            chckEndian.UseVisualStyleBackColor = false;
+            chckEndian.CheckedChanged += endianCheck_CheckedChanged_1;
             // 
             // panel1
             // 
             panel1.BackColor = SystemColors.ControlDark;
-            panel1.Controls.Add(panel4);
-            panel1.Controls.Add(panel3);
+            panel1.Controls.Add(panelMessageOptions);
+            panel1.Controls.Add(panelListOptions);
             panel1.Location = new Point(256, 0);
             panel1.Name = "panel1";
             panel1.Size = new Size(444, 1020);
             panel1.TabIndex = 31;
             panel1.Paint += panel1_Paint;
             // 
-            // panel4
+            // panelMessageOptions
             // 
-            panel4.BackColor = SystemColors.ScrollBar;
-            panel4.BorderStyle = BorderStyle.Fixed3D;
-            panel4.Controls.Add(label15);
-            panel4.Controls.Add(timeoutMsUd);
-            panel4.Controls.Add(label13);
-            panel4.Controls.Add(send);
-            panel4.Controls.Add(panel5);
-            panel4.Controls.Add(loopColor);
-            panel4.Controls.Add(label12);
-            panel4.Controls.Add(label7);
-            panel4.Controls.Add(label11);
-            panel4.Controls.Add(button1);
-            panel4.Controls.Add(endianCheck);
-            panel4.Controls.Add(loopCheck);
-            panel4.Controls.Add(sendMessageBox);
-            panel4.Controls.Add(label4);
-            panel4.Controls.Add(label10);
-            panel4.Controls.Add(sendMessageBtn);
-            panel4.Controls.Add(clrfCheckBox);
-            panel4.Controls.Add(responseFormatCb);
-            panel4.Controls.Add(sendFormatCb);
-            panel4.Location = new Point(3, 221);
-            panel4.Margin = new Padding(4, 5, 4, 5);
-            panel4.Name = "panel4";
-            panel4.Size = new Size(434, 607);
-            panel4.TabIndex = 41;
+            panelMessageOptions.BackColor = SystemColors.ScrollBar;
+            panelMessageOptions.BorderStyle = BorderStyle.Fixed3D;
+            panelMessageOptions.Controls.Add(label15);
+            panelMessageOptions.Controls.Add(udTimeout);
+            panelMessageOptions.Controls.Add(lblOr);
+            panelMessageOptions.Controls.Add(btnSendKeys);
+            panelMessageOptions.Controls.Add(panel5);
+            panelMessageOptions.Controls.Add(loopColor);
+            panelMessageOptions.Controls.Add(lblSendMessage);
+            panelMessageOptions.Controls.Add(lblResponseFormat);
+            panelMessageOptions.Controls.Add(lblMessageOptions);
+            panelMessageOptions.Controls.Add(btnStopLoop);
+            panelMessageOptions.Controls.Add(chckEndian);
+            panelMessageOptions.Controls.Add(chckLoop);
+            panelMessageOptions.Controls.Add(boxSendMessage);
+            panelMessageOptions.Controls.Add(lblRequestFormat);
+            panelMessageOptions.Controls.Add(lblSendKeys);
+            panelMessageOptions.Controls.Add(btnSendMessage);
+            panelMessageOptions.Controls.Add(chckClrf);
+            panelMessageOptions.Controls.Add(cbResponseFormat);
+            panelMessageOptions.Controls.Add(cbSendFormat);
+            panelMessageOptions.Location = new Point(3, 221);
+            panelMessageOptions.Margin = new Padding(4, 5, 4, 5);
+            panelMessageOptions.Name = "panelMessageOptions";
+            panelMessageOptions.Size = new Size(434, 607);
+            panelMessageOptions.TabIndex = 41;
             // 
             // label15
             // 
@@ -613,27 +613,27 @@ namespace LimitlessController
             label15.Text = "Timeout MS:";
             label15.Click += label15_Click;
             // 
-            // timeoutMsUd
+            // udTimeout
             // 
-            timeoutMsUd.Location = new Point(295, 181);
-            timeoutMsUd.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
-            timeoutMsUd.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-            timeoutMsUd.Name = "timeoutMsUd";
-            timeoutMsUd.Size = new Size(105, 31);
-            timeoutMsUd.TabIndex = 45;
-            timeoutMsUd.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            udTimeout.Location = new Point(295, 181);
+            udTimeout.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
+            udTimeout.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            udTimeout.Name = "udTimeout";
+            udTimeout.Size = new Size(105, 31);
+            udTimeout.TabIndex = 45;
+            udTimeout.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
-            // label13
+            // lblOr
             // 
-            label13.AutoSize = true;
-            label13.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 162);
-            label13.Location = new Point(183, 303);
-            label13.Margin = new Padding(4, 0, 4, 0);
-            label13.Name = "label13";
-            label13.Size = new Size(35, 25);
-            label13.TabIndex = 43;
-            label13.Text = "or ";
-            label13.Click += label13_Click;
+            lblOr.AutoSize = true;
+            lblOr.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 162);
+            lblOr.Location = new Point(183, 303);
+            lblOr.Margin = new Padding(4, 0, 4, 0);
+            lblOr.Name = "lblOr";
+            lblOr.Size = new Size(35, 25);
+            lblOr.TabIndex = 43;
+            lblOr.Text = "or ";
+            lblOr.Click += label13_Click;
             // 
             // panel5
             // 
@@ -643,127 +643,127 @@ namespace LimitlessController
             panel5.Size = new Size(436, 215);
             panel5.TabIndex = 44;
             // 
-            // label12
+            // lblSendMessage
             // 
-            label12.AutoSize = true;
-            label12.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 162);
-            label12.Location = new Point(231, 290);
-            label12.Margin = new Padding(4, 0, 4, 0);
-            label12.Name = "label12";
-            label12.Size = new Size(174, 25);
-            label12.TabIndex = 42;
-            label12.Text = "Send one message:";
+            lblSendMessage.AutoSize = true;
+            lblSendMessage.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 162);
+            lblSendMessage.Location = new Point(231, 290);
+            lblSendMessage.Margin = new Padding(4, 0, 4, 0);
+            lblSendMessage.Name = "lblSendMessage";
+            lblSendMessage.Size = new Size(174, 25);
+            lblSendMessage.TabIndex = 42;
+            lblSendMessage.Text = "Send one message:";
             // 
-            // label7
+            // lblResponseFormat
             // 
-            label7.AutoSize = true;
-            label7.Location = new Point(231, 67);
-            label7.Margin = new Padding(4, 0, 4, 0);
-            label7.Name = "label7";
-            label7.Size = new Size(151, 25);
-            label7.TabIndex = 37;
-            label7.Text = "Response format:";
+            lblResponseFormat.AutoSize = true;
+            lblResponseFormat.Location = new Point(231, 67);
+            lblResponseFormat.Margin = new Padding(4, 0, 4, 0);
+            lblResponseFormat.Name = "lblResponseFormat";
+            lblResponseFormat.Size = new Size(151, 25);
+            lblResponseFormat.TabIndex = 37;
+            lblResponseFormat.Text = "Response format:";
             // 
-            // label11
+            // lblMessageOptions
             // 
-            label11.AutoSize = true;
-            label11.Location = new Point(26, 22);
-            label11.Margin = new Padding(4, 0, 4, 0);
-            label11.Name = "label11";
-            label11.Size = new Size(200, 25);
-            label11.TabIndex = 41;
-            label11.Text = "Message Send Options:";
+            lblMessageOptions.AutoSize = true;
+            lblMessageOptions.Location = new Point(26, 22);
+            lblMessageOptions.Margin = new Padding(4, 0, 4, 0);
+            lblMessageOptions.Name = "lblMessageOptions";
+            lblMessageOptions.Size = new Size(200, 25);
+            lblMessageOptions.TabIndex = 41;
+            lblMessageOptions.Text = "Message Send Options:";
             // 
-            // sendMessageBox
+            // boxSendMessage
             // 
-            sendMessageBox.Font = new Font("Segoe UI Black", 9F, FontStyle.Bold, GraphicsUnit.Point, 162);
-            sendMessageBox.ForeColor = SystemColors.Desktop;
-            sendMessageBox.Location = new Point(231, 331);
-            sendMessageBox.Name = "sendMessageBox";
-            sendMessageBox.PlaceholderText = "type the message..";
-            sendMessageBox.ScrollBars = ScrollBars.Vertical;
-            sendMessageBox.Size = new Size(174, 32);
-            sendMessageBox.TabIndex = 34;
-            sendMessageBox.TextChanged += sendMessageBox_TextChanged;
+            boxSendMessage.Font = new Font("Segoe UI Black", 9F, FontStyle.Bold, GraphicsUnit.Point, 162);
+            boxSendMessage.ForeColor = SystemColors.Desktop;
+            boxSendMessage.Location = new Point(231, 331);
+            boxSendMessage.Name = "boxSendMessage";
+            boxSendMessage.PlaceholderText = "type the message..";
+            boxSendMessage.ScrollBars = ScrollBars.Vertical;
+            boxSendMessage.Size = new Size(174, 32);
+            boxSendMessage.TabIndex = 34;
+            boxSendMessage.TextChanged += sendMessageBox_TextChanged;
             // 
-            // label4
+            // lblRequestFormat
             // 
-            label4.AutoSize = true;
-            label4.Location = new Point(26, 67);
-            label4.Margin = new Padding(4, 0, 4, 0);
-            label4.Name = "label4";
-            label4.Size = new Size(138, 25);
-            label4.TabIndex = 36;
-            label4.Text = "Request format:";
+            lblRequestFormat.AutoSize = true;
+            lblRequestFormat.Location = new Point(26, 67);
+            lblRequestFormat.Margin = new Padding(4, 0, 4, 0);
+            lblRequestFormat.Name = "lblRequestFormat";
+            lblRequestFormat.Size = new Size(138, 25);
+            lblRequestFormat.TabIndex = 36;
+            lblRequestFormat.Text = "Request format:";
             // 
-            // label10
+            // lblSendKeys
             // 
-            label10.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 162);
-            label10.Location = new Point(26, 290);
-            label10.Margin = new Padding(4, 0, 4, 0);
-            label10.Name = "label10";
-            label10.Size = new Size(169, 54);
-            label10.TabIndex = 40;
-            label10.Text = "Send checked keys from list:";
+            lblSendKeys.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 162);
+            lblSendKeys.Location = new Point(26, 290);
+            lblSendKeys.Margin = new Padding(4, 0, 4, 0);
+            lblSendKeys.Name = "lblSendKeys";
+            lblSendKeys.Size = new Size(169, 54);
+            lblSendKeys.TabIndex = 40;
+            lblSendKeys.Text = "Send checked keys from list:";
             // 
-            // sendMessageBtn
+            // btnSendMessage
             // 
-            sendMessageBtn.BackColor = SystemColors.ActiveCaption;
-            sendMessageBtn.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 162);
-            sendMessageBtn.ForeColor = SystemColors.ActiveCaptionText;
-            sendMessageBtn.Location = new Point(292, 368);
-            sendMessageBtn.Name = "sendMessageBtn";
-            sendMessageBtn.Size = new Size(113, 58);
-            sendMessageBtn.TabIndex = 35;
-            sendMessageBtn.Text = "Send This";
-            sendMessageBtn.UseVisualStyleBackColor = false;
-            sendMessageBtn.Click += sendMessageBtn_Click;
+            btnSendMessage.BackColor = SystemColors.ActiveCaption;
+            btnSendMessage.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 162);
+            btnSendMessage.ForeColor = SystemColors.ActiveCaptionText;
+            btnSendMessage.Location = new Point(292, 368);
+            btnSendMessage.Name = "btnSendMessage";
+            btnSendMessage.Size = new Size(113, 58);
+            btnSendMessage.TabIndex = 35;
+            btnSendMessage.Text = "Send This";
+            btnSendMessage.UseVisualStyleBackColor = false;
+            btnSendMessage.Click += sendMessageBtn_Click;
             // 
-            // panel3
+            // panelListOptions
             // 
-            panel3.BackColor = SystemColors.ScrollBar;
-            panel3.BorderStyle = BorderStyle.Fixed3D;
-            panel3.Controls.Add(keyAddButton);
-            panel3.Controls.Add(keyTextBox);
-            panel3.Controls.Add(keyDeleteButton);
-            panel3.Controls.Add(label9);
-            panel3.Controls.Add(label8);
-            panel3.Controls.Add(label14);
-            panel3.Location = new Point(3, 5);
-            panel3.Margin = new Padding(4, 5, 4, 5);
-            panel3.Name = "panel3";
-            panel3.Size = new Size(434, 206);
-            panel3.TabIndex = 40;
+            panelListOptions.BackColor = SystemColors.ScrollBar;
+            panelListOptions.BorderStyle = BorderStyle.Fixed3D;
+            panelListOptions.Controls.Add(btnKeyAdd);
+            panelListOptions.Controls.Add(keyTextBox);
+            panelListOptions.Controls.Add(keyDeleteButton);
+            panelListOptions.Controls.Add(lblDeleteKeys);
+            panelListOptions.Controls.Add(lblKeyOptions);
+            panelListOptions.Controls.Add(lblAddKey);
+            panelListOptions.Location = new Point(3, 5);
+            panelListOptions.Margin = new Padding(4, 5, 4, 5);
+            panelListOptions.Name = "panelListOptions";
+            panelListOptions.Size = new Size(434, 206);
+            panelListOptions.TabIndex = 40;
             // 
-            // label9
+            // lblDeleteKeys
             // 
-            label9.AutoSize = true;
-            label9.Location = new Point(45, 53);
-            label9.Margin = new Padding(4, 0, 4, 0);
-            label9.Name = "label9";
-            label9.Size = new Size(175, 25);
-            label9.TabIndex = 39;
-            label9.Text = "Delete checked keys:";
+            lblDeleteKeys.AutoSize = true;
+            lblDeleteKeys.Location = new Point(45, 53);
+            lblDeleteKeys.Margin = new Padding(4, 0, 4, 0);
+            lblDeleteKeys.Name = "lblDeleteKeys";
+            lblDeleteKeys.Size = new Size(175, 25);
+            lblDeleteKeys.TabIndex = 39;
+            lblDeleteKeys.Text = "Delete checked keys:";
             // 
-            // label8
+            // lblKeyOptions
             // 
-            label8.AutoSize = true;
-            label8.Location = new Point(16, 16);
-            label8.Margin = new Padding(4, 0, 4, 0);
-            label8.Name = "label8";
-            label8.Size = new Size(111, 25);
-            label8.TabIndex = 38;
-            label8.Text = "List Opitons:";
+            lblKeyOptions.AutoSize = true;
+            lblKeyOptions.Location = new Point(16, 16);
+            lblKeyOptions.Margin = new Padding(4, 0, 4, 0);
+            lblKeyOptions.Name = "lblKeyOptions";
+            lblKeyOptions.Size = new Size(111, 25);
+            lblKeyOptions.TabIndex = 38;
+            lblKeyOptions.Text = "List Opitons:";
             // 
-            // label14
+            // lblAddKey
             // 
-            label14.Location = new Point(45, 108);
-            label14.Margin = new Padding(4, 0, 4, 0);
-            label14.Name = "label14";
-            label14.Size = new Size(173, 36);
-            label14.TabIndex = 44;
-            label14.Text = "Add a key to list:";
-            label14.Click += label14_Click;
+            lblAddKey.Location = new Point(45, 108);
+            lblAddKey.Margin = new Padding(4, 0, 4, 0);
+            lblAddKey.Name = "lblAddKey";
+            lblAddKey.Size = new Size(173, 36);
+            lblAddKey.TabIndex = 44;
+            lblAddKey.Text = "Add a key to list:";
+            lblAddKey.Click += label14_Click;
             // 
             // label5
             // 
@@ -776,20 +776,20 @@ namespace LimitlessController
             label5.Text = "to";
             label5.Click += label5_Click;
             // 
-            // panel2
+            // panelConverter
             // 
-            panel2.BackColor = SystemColors.ScrollBar;
-            panel2.BorderStyle = BorderStyle.Fixed3D;
-            panel2.Controls.Add(label6);
-            panel2.Controls.Add(label5);
-            panel2.Controls.Add(convertReqTextBox);
-            panel2.Controls.Add(convertResultTextBox);
-            panel2.Controls.Add(convertReqCb);
-            panel2.Controls.Add(convertResultCb);
-            panel2.Location = new Point(706, 737);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(715, 282);
-            panel2.TabIndex = 34;
+            panelConverter.BackColor = SystemColors.ScrollBar;
+            panelConverter.BorderStyle = BorderStyle.Fixed3D;
+            panelConverter.Controls.Add(label6);
+            panelConverter.Controls.Add(label5);
+            panelConverter.Controls.Add(txtConvertRequest);
+            panelConverter.Controls.Add(txtConvertResult);
+            panelConverter.Controls.Add(cbConvertReq);
+            panelConverter.Controls.Add(cbConvertResult);
+            panelConverter.Location = new Point(706, 737);
+            panelConverter.Name = "panelConverter";
+            panelConverter.Size = new Size(715, 282);
+            panelConverter.TabIndex = 34;
             // 
             // label6
             // 
@@ -809,9 +809,9 @@ namespace LimitlessController
             BackColor = SystemColors.ControlDark;
             ClientSize = new Size(1898, 1024);
             Controls.Add(clearLogBtn);
-            Controls.Add(allSelect);
-            Controls.Add(ipPortPanel);
-            Controls.Add(panel2);
+            Controls.Add(chckSelectAll);
+            Controls.Add(panelIpPort);
+            Controls.Add(panelConverter);
             Controls.Add(keyList);
             Controls.Add(resultView);
             Controls.Add(panel1);
@@ -821,67 +821,67 @@ namespace LimitlessController
             Load += Form1_Load_1;
             ((System.ComponentModel.ISupportInitialize)resultView).EndInit();
             contextMenuStrip1.ResumeLayout(false);
-            ipPortPanel.ResumeLayout(false);
-            ipPortPanel.PerformLayout();
+            panelIpPort.ResumeLayout(false);
+            panelIpPort.PerformLayout();
             panel1.ResumeLayout(false);
-            panel4.ResumeLayout(false);
-            panel4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)timeoutMsUd).EndInit();
-            panel3.ResumeLayout(false);
-            panel3.PerformLayout();
-            panel2.ResumeLayout(false);
-            panel2.PerformLayout();
+            panelMessageOptions.ResumeLayout(false);
+            panelMessageOptions.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)udTimeout).EndInit();
+            panelListOptions.ResumeLayout(false);
+            panelListOptions.PerformLayout();
+            panelConverter.ResumeLayout(false);
+            panelConverter.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
-        private Button send;
+        private Button btnSendKeys;
         private DataGridView resultView;
-        private Panel ipPortPanel;
-        private TextBox portBox;
-        private TextBox ipBox;
-        private Label label2;
-        private Label label1;
-        private Button button1;
-        private Button connectIp;
-        private Label label3;
-        private CheckBox loopCheck;
-        private CheckBox allSelect;
+        private Panel panelIpPort;
+        private TextBox boxPort;
+        private TextBox boxIp;
+        private Label lblPort;
+        private Label lblIp;
+        private Button btnStopLoop;
+        private Button btnConnect;
+        private Label lblConnection;
+        private CheckBox chckLoop;
+        private CheckBox chckSelectAll;
         private Button clearLogBtn;
         private Panel loopColor;
         private System.Windows.Forms.Timer colorTimer;
-        private Button keyAddButton;
+        private Button btnKeyAdd;
         private Button keyDeleteButton;
         private TextBox keyTextBox;
         private ListView keyList;
-        private Button disconnectButton;
-        private CheckBox clrfCheckBox;
-        private ComboBox sendFormatCb;
-        private ComboBox responseFormatCb;
-        private RichTextBox convertReqTextBox;
-        private RichTextBox convertResultTextBox;
-        private ComboBox convertResultCb;
-        private ComboBox convertReqCb;
+        private Button btnDisconnect;
+        private CheckBox chckClrf;
+        private ComboBox cbSendFormat;
+        private ComboBox cbResponseFormat;
+        private RichTextBox txtConvertRequest;
+        private RichTextBox txtConvertResult;
+        private ComboBox cbConvertResult;
+        private ComboBox cbConvertReq;
         private System.Windows.Forms.Timer ConnectionTimer;
-        private CheckBox endianCheck;
+        private CheckBox chckEndian;
         private Panel panel1;
         private Label label5;
-        private Button sendMessageBtn;
-        private TextBox sendMessageBox;
-        private Panel panel2;
+        private Button btnSendMessage;
+        private TextBox boxSendMessage;
+        private Panel panelConverter;
         private Label label6;
-        private Label label7;
-        private Label label4;
-        private Label label9;
-        private Label label8;
-        private Label label10;
-        private Panel panel3;
-        private Panel panel4;
-        private Label label13;
-        private Label label12;
-        private Label label11;
-        private Label label14;
+        private Label lblResponseFormat;
+        private Label lblRequestFormat;
+        private Label lblDeleteKeys;
+        private Label lblKeyOptions;
+        private Label lblSendKeys;
+        private Panel panelListOptions;
+        private Panel panelMessageOptions;
+        private Label lblOr;
+        private Label lblSendMessage;
+        private Label lblMessageOptions;
+        private Label lblAddKey;
         private Panel panel5;
         private ContextMenuStrip contextMenuStrip1;
         private ToolStripMenuItem convertToolStripMenuItem;
@@ -903,6 +903,6 @@ namespace LimitlessController
         private DataGridViewTextBoxColumn Response;
         private DataGridViewTextBoxColumn Formated;
         private Label label15;
-        private NumericUpDown timeoutMsUd;
+        private NumericUpDown udTimeout;
     }
 }

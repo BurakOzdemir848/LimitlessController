@@ -1,8 +1,8 @@
 ﻿using LimitlessController.Core.Interfaces;
 using LimitlessController.Core.Models;
 using LimitlessController.Core.Services;
-using LimitlessController.Infrastructure.Services;
 using LimitlessController.Infrastructure.Tcp;
+using LimitlessController.Infrastructure.TCP;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 

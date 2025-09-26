@@ -30,7 +30,7 @@ namespace LimitlessController.Infrastructure.Tcp
             {
                 _client = new TcpClient();
 
-                _client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+                _client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true); //sure degisecek
                 await _client.ConnectAsync(ip, port);
                 _stream = _client.GetStream();
                 return true;
@@ -59,12 +59,12 @@ namespace LimitlessController.Infrastructure.Tcp
             return true;
         }
 
-        public async Task<byte[]> ReceiveAsync(int timeoutMs, CancellationToken token = default)
+        public async Task<byte[]> ReceiveAsync(int timeoutMs, bool waitForCrlf, CancellationToken token = default)
         {
             if (!IsConnected)
                 throw new InvalidOperationException("Connect to the server first");
 
-            var buffer = new byte[150];
+            var buffer = new byte[1024];
             using var ms = new MemoryStream();
 
             while (true)
@@ -75,21 +75,36 @@ namespace LimitlessController.Infrastructure.Tcp
                 if (completed != readTask)
                 {
                     if (ms.Length > 0)
-                    {
                         return ms.ToArray();
-                    }
-                    throw new TimeoutException($"No response received within {timeoutMs}ms, change your timeout or ensure your message");
+
+                    throw new TimeoutException($"No response received within {timeoutMs}ms");
                 }
+
                 var bytesRead = await readTask;
                 if (bytesRead == 0)
                 {
                     if (ms.Length > 0) return ms.ToArray();
                     throw new IOException("Remote host closed connection");
                 }
-                ms.Write(buffer,0, bytesRead);
-                if (!_stream.DataAvailable) break;
 
+                ms.Write(buffer, 0, bytesRead);
+
+                if (waitForCrlf)
+                {
+                    var data = ms.ToArray();
+                    if (data.Length >= 2 && data[^2] == 0x0D && data[^1] == 0x0A)
+                    {
+                        return data;
+                    }
+
+                }
+                else
+                {
+                    if (!_stream.DataAvailable)
+                        break;
+                }
             }
+
             return ms.ToArray();
         }
         public void Disconnect()

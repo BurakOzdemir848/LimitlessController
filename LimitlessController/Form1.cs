@@ -1,7 +1,7 @@
 using LimitlessController.Core.Interfaces;
 using LimitlessController.Core.Models;
 using LimitlessController.Core.Services;
-using LimitlessController.Infrastructure.Services;
+using LimitlessController.Infrastructure.TCP;
 using System.Text.Json;
 
 namespace LimitlessController
@@ -25,6 +25,8 @@ namespace LimitlessController
 
             this.MinimumSize = this.Size;
             this.MaximumSize = this.Size;
+
+            txtConvertResult.ReadOnly = true;
         }
 
         private void LoadFromTxt()
@@ -36,8 +38,8 @@ namespace LimitlessController
 
                 Config config = JsonSerializer.Deserialize<Config>(json);
 
-                ipBox.Text = config.IP;
-                portBox.Text = config.Port;
+                boxIp.Text = config.IP;
+                boxPort.Text = config.Port;
 
                 keyList.Items.Clear();
                 foreach (var key in config.Keys)
@@ -54,7 +56,7 @@ namespace LimitlessController
 
         private async void Send_Click(object sender, EventArgs e)
         {
-            MessageBox.Show($"Checked Keys SENT. Wait for {(int)timeoutMsUd.Value}ms to send another!");
+            MessageBox.Show($"Checked Keys SENT. Wait for {(int)udTimeout.Value}ms to send another!");
             
             if (_connection.IsConnected==false) MessageBox.Show("Not connected to server.");
 
@@ -62,7 +64,7 @@ namespace LimitlessController
             var token = cts.Token;
             try
             {
-                if (!loopCheck.Checked)
+                if (!chckLoop.Checked)
                 {
                     if (keyList.CheckedIndices.Count == 0) { MessageBox.Show("Select at least 1 key!"); return; }
 
@@ -70,11 +72,11 @@ namespace LimitlessController
                     {
                         if (item == null) break;
                         var result = await _messageService.SendAndReceiveAsync(item.Text,
-                            (DataFormat)sendFormatCb.SelectedIndex,
-                            (DataFormat)responseFormatCb.SelectedIndex,
-                            endianCheck.Checked,
-                            clrfCheckBox.Checked,
-                            (int)timeoutMsUd.Value,
+                            (DataFormat)cbSendFormat.SelectedIndex,
+                            (DataFormat)cbResponseFormat.SelectedIndex,
+                            chckEndian.Checked,
+                            chckClrf.Checked,
+                            (int)udTimeout.Value,
                             token);
                         resultView.Rows.Add(item.Text, result.HexDump, result.Formatted);
                     }
@@ -84,7 +86,7 @@ namespace LimitlessController
                     MessageBox.Show("Cancel the active loop");
                     return;
                 }
-                if (loopCheck.Checked)
+                if (chckLoop.Checked)
                 {
                     loopRunning = true;
                     try
@@ -102,11 +104,11 @@ namespace LimitlessController
                                 loopColor.Invalidate();
 
                                 var result = await _messageService.SendAndReceiveAsync(item.Text,
-                                (DataFormat)sendFormatCb.SelectedIndex,
-                                (DataFormat)responseFormatCb.SelectedIndex,
-                                endianCheck.Checked,
-                                clrfCheckBox.Checked,
-                                (int)timeoutMsUd.Value,
+                                (DataFormat)cbSendFormat.SelectedIndex,
+                                (DataFormat)cbResponseFormat.SelectedIndex,
+                                chckEndian.Checked,
+                                chckClrf.Checked,
+                                (int)udTimeout.Value,
                                 token);
 
                                 resultView.Rows.Add(item.Text, result.HexDump, result.Formatted);
@@ -144,19 +146,19 @@ namespace LimitlessController
 
         private async void ConnectBtn_Click(object sender, EventArgs e)
         {
-            string ip = ipBox.Text;
-            int port = int.Parse(portBox.Text);
+            string ip = boxIp.Text;
+            int port = int.Parse(boxPort.Text);
             if (await _connection.ConnectAsync(ip, port))
             {
-                label3.Text = "CONNECTED";
-                label3.BackColor = Color.Green;
+                lblConnection.Text = "CONNECTED";
+                lblConnection.BackColor = Color.Green;
                 ConnectionTimer.Start();
 
             }
             else
             {
-                label3.Text = "DISCONNECTED";
-                label3.BackColor = Color.Red;
+                lblConnection.Text = "DISCONNECTED";
+                lblConnection.BackColor = Color.Red;
 
             }
         }
@@ -171,10 +173,10 @@ namespace LimitlessController
             LoadFromTxt();
             ConnectionTimer.Interval = 500;
             ConnectionTimer.Tick += ConnectionTimer_Tick;
-            sendFormatCb.SelectedIndex = 4;
-            responseFormatCb.SelectedIndex = 4;
-            convertReqCb.SelectedIndex = 4;
-            convertResultCb.SelectedIndex = 4;
+            cbSendFormat.SelectedIndex = 4;
+            cbResponseFormat.SelectedIndex = 4;
+            cbConvertReq.SelectedIndex = 4;
+            cbConvertResult.SelectedIndex = 4;
 
         }
 
@@ -185,7 +187,7 @@ namespace LimitlessController
 
         private void allSelect_CheckedChanged(object sender, EventArgs e)
         {
-            if (allSelect.Checked)
+            if (chckSelectAll.Checked)
                 foreach (ListViewItem item in keyList.Items)
                     item.Checked = true;
 
@@ -258,8 +260,8 @@ namespace LimitlessController
         private void button3_Click(object sender, EventArgs e)
         {
             _connection.Disconnect();
-            label3.Text = "DISCONNECTED";
-            label3.BackColor = Color.Red;
+            lblConnection.Text = "DISCONNECTED";
+            lblConnection.BackColor = Color.Red;
             _connection.Disconnect();
         }
 
@@ -273,10 +275,10 @@ namespace LimitlessController
         {
             try
             {
-                byte[] result = _factory.Resolve((DataFormat)convertReqCb.SelectedItem).ConvertRequest(convertReqTextBox.Text, endianCheck.Checked, clrfCheckBox.Checked);
-                convertResultTextBox.Text = _factory.Resolve((DataFormat)convertResultCb.SelectedItem).ConvertResponse(result, endianCheck.Checked);
+                byte[] result = _factory.Resolve((DataFormat)cbConvertReq.SelectedItem).ConvertRequest(txtConvertRequest.Text, chckEndian.Checked, chckClrf.Checked);
+                txtConvertResult.Text = _factory.Resolve((DataFormat)cbConvertResult.SelectedItem).ConvertResponse(result, chckEndian.Checked);
             }
-            catch { convertResultTextBox.Clear(); }
+            catch { txtConvertResult.Clear(); }
         }
         private void convertResultTextBox_TextChanged(object sender, EventArgs e)
         {
@@ -298,19 +300,19 @@ namespace LimitlessController
         {
             if (_connection.IsConnected)
             {
-                label3.Text = "CONNECTED";
-                label3.BackColor = Color.Green;
+                lblConnection.Text = "CONNECTED";
+                lblConnection.BackColor = Color.Green;
             }
             else
             {
-                label3.Text = "DISCONNECTED";
-                label3.BackColor = Color.Red;
+                lblConnection.Text = "DISCONNECTED";
+                lblConnection.BackColor = Color.Red;
                 _connection.Disconnect();
             }
         }
         private void endianCheck_CheckedChanged_1(object sender, EventArgs e)
         {
-            convertReqTextBox_TextChanged(convertReqTextBox, EventArgs.Empty);
+            convertReqTextBox_TextChanged(txtConvertRequest, EventArgs.Empty);
 
         }
 
@@ -326,26 +328,26 @@ namespace LimitlessController
 
         private async void sendMessageBtn_Click(object sender, EventArgs e)
         {
-            MessageBox.Show($"The message has been sent. Wait for {(int)timeoutMsUd.Value}ms to send another!");
+            MessageBox.Show($"The message has been sent. Wait for {(int)udTimeout.Value}ms to send another!");
             if (_connection == null) MessageBox.Show("Not connected to server.");
 
             cts = new CancellationTokenSource();
             var token = cts.Token;
-            if (sendMessageBox.Text == string.Empty || sendMessageBox.Text == null) { MessageBox.Show("Enter a message to send."); return; }
+            if (boxSendMessage.Text == string.Empty || boxSendMessage.Text == null) { MessageBox.Show("Enter a message to send."); return; }
             try
             {
 
-                if (!loopCheck.Checked)
+                if (!chckLoop.Checked)
                 {
-                    var result = await _messageService.SendAndReceiveAsync(sendMessageBox.Text,
-                        (DataFormat)sendFormatCb.SelectedIndex,
-                        (DataFormat)responseFormatCb.SelectedIndex,
-                        endianCheck.Checked,
-                        clrfCheckBox.Checked,
-                        (int)timeoutMsUd.Value,
+                    var result = await _messageService.SendAndReceiveAsync(boxSendMessage.Text,
+                        (DataFormat)cbSendFormat.SelectedIndex,
+                        (DataFormat)cbResponseFormat.SelectedIndex,
+                        chckEndian.Checked,
+                        chckClrf.Checked,
+                        (int)udTimeout.Value,
                         token);
 
-                    resultView.Rows.Add(sendMessageBox.Text, result.HexDump, result.Formatted);
+                    resultView.Rows.Add(boxSendMessage.Text, result.HexDump, result.Formatted);
                     return;
                 }
                 if (loopRunning)
@@ -363,15 +365,15 @@ namespace LimitlessController
                         colorTimer.Start();
                         loopColor.Invalidate();
 
-                        var result = await _messageService.SendAndReceiveAsync(sendMessageBox.Text,
-                            (DataFormat)sendFormatCb.SelectedIndex,
-                            (DataFormat)responseFormatCb.SelectedIndex,
-                            endianCheck.Checked,
-                            clrfCheckBox.Checked,
-                            (int)timeoutMsUd.Value,
+                        var result = await _messageService.SendAndReceiveAsync(boxSendMessage.Text,
+                            (DataFormat)cbSendFormat.SelectedIndex,
+                            (DataFormat)cbResponseFormat.SelectedIndex,
+                            chckEndian.Checked,
+                            chckClrf.Checked,
+                            (int)udTimeout.Value,
                             token);
 
-                        resultView.Rows.Add(sendMessageBox.Text, result.HexDump, result.Formatted);
+                        resultView.Rows.Add(boxSendMessage.Text, result.HexDump, result.Formatted);
                         await Task.Delay(1000, token);
                     }
                 }
@@ -461,25 +463,25 @@ namespace LimitlessController
 
                 if (col == "Response")
                 {
-                    formatedMessage = _factory.Resolve(DataFormat.Hex).ConvertRequest(selectedText, endianCheck.Checked, clrfCheckBox.Checked);
-                    convertReqCb.SelectedItem = DataFormat.Hex;
+                    formatedMessage = _factory.Resolve(DataFormat.Hex).ConvertRequest(selectedText, chckEndian.Checked, chckClrf.Checked);
+                    cbConvertReq.SelectedItem = DataFormat.Hex;
 
                 }
                 else if (col == "Formated")
                 {
-                    formatedMessage = _factory.Resolve((DataFormat)responseFormatCb.SelectedIndex).ConvertRequest(selectedText, endianCheck.Checked, clrfCheckBox.Checked);
-                    convertReqCb.SelectedItem = responseFormatCb.SelectedItem;
+                    formatedMessage = _factory.Resolve((DataFormat)cbResponseFormat.SelectedIndex).ConvertRequest(selectedText, chckEndian.Checked, chckClrf.Checked);
+                    cbConvertReq.SelectedItem = cbResponseFormat.SelectedItem;
 
                 }
                 else
                 { MessageBox.Show("Select response or formated colums cell"); }
-                string result = _factory.Resolve(targetFormat).ConvertResponse(formatedMessage, endianCheck.Checked);
+                string result = _factory.Resolve(targetFormat).ConvertResponse(formatedMessage, chckEndian.Checked);
 
-                convertResultTextBox.Clear();
-                convertReqTextBox.Clear();
-                convertReqTextBox.Text = selectedText;
-                convertResultTextBox.Text = result;
-                convertResultCb.SelectedItem = targetFormat;
+                txtConvertResult.Clear();
+                txtConvertRequest.Clear();
+                txtConvertRequest.Text = selectedText;
+                txtConvertResult.Text = result;
+                cbConvertResult.SelectedItem = targetFormat;
             }
             catch (Exception ex) { MessageBox.Show($"Error: {ex.Message}"); }
         }
